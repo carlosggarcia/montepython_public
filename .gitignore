@@ -38,3 +38,10 @@ data/JLA/
 # Ignore the coverage reports
 .coverage
 htmlcov/
+
+# Custom files
+.bashrc
+*.sh
+*.out
+*.covmat
+*.bestfit
