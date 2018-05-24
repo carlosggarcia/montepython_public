@@ -1,0 +1,16 @@
+# z, fsigma8, sigma
+#6DF
+6DF         0.067  0.423  0.055
+#MGS
+MGS         0.15   0.53   0.19
+#LRG
+LRG         0.30   0.49   0.09
+#WIGGLEZ
+WIGGLEZ1    0.22   0.42   0.07
+WIGGLEZ2    0.41   0.45   0.04
+WIGGLEZ3    0.60   0.43   0.04
+WIGGLEZ4    0.78   0.38   0.04
+#BOSS
+#BOSS        0.57   0.450  0.011
+#VIPERS
+VIPERS      0.80   0.47   0.08
