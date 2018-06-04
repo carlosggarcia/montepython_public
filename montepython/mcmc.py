@@ -463,7 +463,7 @@ def chain(cosmo, data, command_line):
     while k <= command_line.N:
 
         if N%100==0:#EB
-            print 'Rejected ', N, ' points on chain ', rank#EB
+            print 'Stuck! Rejected ', N, ' points on chain ', rank+1#EB
         # If the number of steps reaches the number set in the adaptive method plus one,
         # then the proposal distribution should be gradually adapted.
         # If the number of steps also exceeds the number set in adaptive_ts,
@@ -744,7 +744,19 @@ def chain(cosmo, data, command_line):
         # multiplicity of the point and start the loop again
         if get_new_position(
                 data, sigma_eig, U, k, Cholesky, Rotation) is True:
-            newloglike = sampler.compute_lkl(cosmo, data)
+                import signal#EB
+                tmout = 1800#EB
+                def handler(signum, frame):#EB
+                    raise Exception()#EB
+                signal.signal(signal.SIGALRM, handler)#EB
+                signal.alarm(tmout)#EB
+                try:#EB
+                    newloglike = sampler.compute_lkl(cosmo, data)#EB
+                except Exception:#EB
+                    newloglike = data.boundary_loglike#EB
+                    print 'Stuck! Could not calculate the likelihood in ', tmout, ' secs for chain ', rank+1#EB
+                    print data.cosmo_arguments#EB
+                # newloglike = sampler.compute_lkl(cosmo, data)#EB: uncomment this
         else:  # reject step
             rej += 1
             if command_line.superupdate:
