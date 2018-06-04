@@ -461,6 +461,9 @@ def chain(cosmo, data, command_line):
     # Main loop, that goes on while the maximum number of failure is not
     # reached, and while the expected amount of steps (N) is not taken.
     while k <= command_line.N:
+
+        if N%100==0:#EB
+            print 'Rejected ', N, ' points on chain ', rank#EB
         # If the number of steps reaches the number set in the adaptive method plus one,
         # then the proposal distribution should be gradually adapted.
         # If the number of steps also exceeds the number set in adaptive_ts,
