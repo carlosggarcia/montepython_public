@@ -756,6 +756,7 @@ def chain(cosmo, data, command_line):
                     newloglike = data.boundary_loglike#EB
                     print 'Stuck! Could not calculate the likelihood in ', tmout, ' secs for chain ', rank+1#EB
                     print data.cosmo_arguments#EB
+                signal.alarm(0)#EB
                 # newloglike = sampler.compute_lkl(cosmo, data)#EB: uncomment this
         else:  # reject step
             rej += 1
