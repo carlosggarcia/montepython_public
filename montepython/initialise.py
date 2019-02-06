@@ -178,6 +178,9 @@ def recover_cosmological_module(data):
                 "python setup.py build")
 
         cosmo = Class()
+    elif data.cosmological_module_name == 'CCL':
+        from ccl_class import CCL
+        cosmo = CCL()
     else:
         raise io_mp.ConfigurationError(
             "Unrecognised cosmological module. " +

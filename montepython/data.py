@@ -213,6 +213,8 @@ class Data(object):
         # Determine which cosmological code is in use
         if self.path['cosmo'].find('class') != -1:
             self.cosmological_module_name = 'CLASS'
+        elif self.path['cosmo'].find('pyccl') != -1:
+            self.cosmological_module_name = 'CCL'
         else:
             self.cosmological_module_name = None
 
@@ -292,6 +294,16 @@ class Data(object):
                     # not have this feature properly implemented. Ignore this.
                     pass
 
+        elif self.cosmological_module_name == 'CCL':
+            try:
+                import pyccl
+                self.version = pyccl.__version__
+            except:
+                self.version = ''
+            print 'with CCL %s' % self.version
+            warnings.warn(
+                "Running CCL from a non version-controlled repository")
+            self.git_version, self.git_branch = '', ''
         else:
             raise io_mp.CosmologicalModuleError(
                 "If you want to check for another cosmological module version"

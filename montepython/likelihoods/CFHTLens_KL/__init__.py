@@ -3,6 +3,8 @@ import numpy as np
 from montepython.likelihood_class import Likelihood
 import montepython.io_mp as io_mp
 import warnings
+from astropy.io import fits
+import montepython.ccl_tools as tools
 
 
 class CFHTLens_KL(Likelihood):
@@ -12,50 +14,134 @@ class CFHTLens_KL(Likelihood):
     def __init__(self, path, data, command_line):
 
         Likelihood.__init__(self, path, data, command_line)
-        #print(path)
-        #print(dir(data))
-        #print(command_line)
 
-        # define array for values of z and data points
-        self.z = np.array([], 'float64')
-        self.data = np.array([], 'float64')
-        self.error = np.array([], 'float64')
+        # Read photo_z data
+        with fits.open(os.path.join(self.data_directory, self.file)) as fn:
+            self.photo_z = fn['PHOTO_Z'].data
 
-        # read redshifts and data points
-        with open(os.path.join(self.data_directory, self.file), 'r') as filein:
-            for line in filein:
-                if line.find('#') == -1:
-                    # the first entry of the line is the identifier
-                    this_line = line.split()
-                    self.z = np.append(self.z, float(this_line[1]))
-                    self.data = np.append(self.data, float(this_line[2]))
-                    self.error = np.append(self.error, float(this_line[3]))
+        self.is_kl = False
+        # Read method
+        self.method = data.cosmo_arguments['method']
+        test = self.method in ['full', 'kl_diag', 'kl_off_diag']
+        assert test, 'Method not recognized! Options are: full, kl_off_diag or kl_diag'
 
-        # number of data points
-        self.num_points = np.shape(self.z)[0]
+        # Read kl_arguments
+        if self.method in ['kl_diag', 'kl_off_diag']:
+
+            self.is_kl = True
+
+            self.n_kl = data.cosmo_arguments['n_kl']
+            test = self.n_kl>0 and self.n_kl<self.photo_z.shape[0]
+            assert test, 'n_kl should be greater than 0 and smaller than {}'.format(self.photo_z.shape[0])
+
+            self.kl_scale_dep = tools.read_bool(data.cosmo_arguments['kl_scale_dep'])
+
+
+        if self.method == 'kl_diag':
+            self.is_diag = True
+        else:
+            self.is_diag = False
+
+
+        # Read data
+        self.mask_ell = np.array(self.mask_ell)
+        self.bandpowers = np.array(self.bandpowers)
+        with fits.open(os.path.join(self.data_directory, self.file)) as fn:
+            self.ell = fn['ELL'].data
+            self.cls = fn['CL_EE'].data
+            self.noise = fn['CL_EE_NOISE'].data
+            self.sims = fn['CL_SIM_EE'].data
+            if self.method in ['kl_diag', 'kl_off_diag']:
+                if self.kl_scale_dep:
+                    self.kl_t = fn['KL_T_ELL'].data
+                else:
+                    self.kl_t = fn['KL_T'].data
+
+        # How many sims
+        self.n_data = len(self.mask_ell[self.mask_ell])
+        self.n_bins = self.photo_z.shape[0]-1
+        self.n_data_tot = self.n_data*self.n_bins*(self.n_bins+1)/2
+        if self.method == 'kl_diag':
+            self.n_data = self.n_data*self.n_kl
+        elif self.method == 'kl_off_diag':
+            self.n_data = self.n_data*self.n_kl*(self.n_kl+1)/2
+        else:
+            self.n_data = self.n_data*self.n_bins*(self.n_bins+1)/2
+        self.n_sims = tools.how_many_sims(data.cosmo_arguments['n_sims'], self.sims.shape[1], self.n_data, self.n_data_tot)
+
+
+        # Clean Cl's
+        self.cls = tools.clean_cl(self.cls, self.noise)
+        self.sims = tools.clean_cl(self.sims, self.noise)
+
+
+        # Apply KL
+        if self.method in ['kl_off_diag', 'kl_diag']:
+            self.cls = tools.apply_kl(self.kl_t, self.cls, self.method, self.kl_scale_dep, self.n_kl)
+            self.sims = tools.apply_kl(self.kl_t, self.sims, self.method, self.kl_scale_dep, self.n_kl)
+
+
+        # Select sims
+        self.sims = tools.select_sims(self.sims, self.n_sims)
+
+        # Unify fields
+        cov_pf = tools.get_covmat(self.sims, self.is_diag)
+        self.cls = tools.unify_fields_cl(self.cls, cov_pf, self.is_diag)
+        self.sims = tools.unify_fields_cl(self.sims, cov_pf, self.is_diag)
+
+
+        # Mask Cl's
+        self.cls = tools.mask_cl(self.cls, self.mask_ell, self.is_diag)
+        self.sims = tools.mask_cl(self.sims, self.mask_ell, self.is_diag)
+
+
+        # Calculate covmat Cl's
+        cov = tools.get_covmat(self.sims, self.is_diag)
+
+
+        # Flatten Cl's and covmat
+        self.cls = tools.flatten_cl(self.cls, self.is_diag)
+        cov = tools.flatten_covmat(cov, self.is_diag)
+
+
+        # Calculate inverse of covmat
+        factor = (self.n_sims-self.n_data-2.)/(self.n_sims-1.)
+        self.inv_cov_mat = factor*np.linalg.inv(cov)
 
         # end of initialization
+
+
 
     # compute likelihood
 
     def loglkl(self, cosmo, data):
+        print self.inv_cov_mat.shape
+        #print cosmo.pars
+        #print data.mcmc_parameters['h']['prior'].prior_type
+        #print cosmo.pars['h']
+        #print data.mcmc_parameters['h']
+        #print data.get_mcmc_parameters(['fixed'])
+#        print cosmo.get_current_derived_parameters(['sigma8'])
 
         chi2 = 0.
-        print(cosmo.pars)
+        #print(cosmo.pars)
 
         # for each point, compute growth rate f, power spectrum normalization sig8,
         # theoretical prediction and chi2 contribution
 
-        for i in range(self.num_points):
-
-            #s8 = cosmo.sigma8_at_z(self.z[i])
-            #f  = cosmo.growthrate_at_z(self.z[i])
-            f = 1.
-            s8 = 0.8
-            theo = f*s8
-
-            chi2 += ((theo - self.data[i]) / self.error[i]) ** 2
+        # for i in range(self.num_points):
+        #
+        #     #s8 = cosmo.sigma8_at_z(self.z[i])
+        #     #f  = cosmo.growthrate_at_z(self.z[i])
+        #     f = 1.
+        #     s8 = 0.8
+        #     theo = f*s8
+        #
+        #     chi2 += ((theo - self.data[i]) / self.error[i]) ** 2
 
         # return ln(L)
         lkl = - 0.5 * chi2
         return lkl
+
+
+    # Useful functions
