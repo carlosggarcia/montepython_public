@@ -1,6 +1,8 @@
 import re
 import random
 import numpy as np
+import pymaster as nmt
+
 
 
 def read_bool(value):
@@ -39,18 +41,6 @@ def clean_cl(cl, noise):
 
 
 def apply_kl(kl_t, corr, method, scale_dep, n_kl):
-    """ Apply the KL transform to the correlation function
-        and reduce number of dimensions.
-
-    Args:
-        kl_t: KL transform.
-        corr: correlation function
-
-    Returns:
-        KL transformed correlation function.
-
-    """
-
     kl_t_T = np.moveaxis(kl_t,[-1],[-2])
 
     # Apply KL transform
@@ -169,3 +159,22 @@ def mask_cl(cl, mask, is_diag):
     mask_cl = mask_cl[mask]
     mask_cl = np.moveaxis(mask_cl,[0],[idx])
     return mask_cl
+
+
+def couple_decouple_cl(ell, cl, mcm_path, n_bins, n_bp, n_fields=4):
+    nmt_cl = np.moveaxis(cl,[0],[-1])
+    nmt_cl = np.stack((nmt_cl,np.zeros(nmt_cl.shape),np.zeros(nmt_cl.shape),np.zeros(nmt_cl.shape)))
+    nmt_cl = np.moveaxis(nmt_cl,[0],[-2])
+    final_cl = np.zeros((n_fields, n_bins, n_bins, n_bp))
+    for nb1 in range(n_bins):
+        for nb2 in range(nb1,n_bins):
+            for nf in range(n_fields):
+                wf = nmt.NmtWorkspaceFlat()
+                wf.read_from(mcm_path+'W{}_Z{}{}.dat'.format(nf+1,nb1+1,nb2+1))
+                cl_pfb = wf.couple_cell(ell, nmt_cl[nb1,nb2])
+                cl_pfb = wf.decouple_cell(cl_pfb)
+                final_cl[nf, nb1, nb2] = cl_pfb[0]
+                final_cl[nf, nb2, nb1] = cl_pfb[0]
+    final_cl = np.moveaxis(final_cl,[-1],[-3])
+
+    return final_cl

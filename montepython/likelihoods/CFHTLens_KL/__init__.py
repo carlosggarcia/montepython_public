@@ -85,9 +85,9 @@ class CFHTLens_KL(Likelihood):
         self.sims = tools.select_sims(self.sims, self.n_sims)
 
         # Unify fields
-        cov_pf = tools.get_covmat(self.sims, self.is_diag)
-        self.cls = tools.unify_fields_cl(self.cls, cov_pf, self.is_diag)
-        self.sims = tools.unify_fields_cl(self.sims, cov_pf, self.is_diag)
+        self.cov_pf = tools.get_covmat(self.sims, self.is_diag)
+        self.cls = tools.unify_fields_cl(self.cls, self.cov_pf, self.is_diag)
+        self.sims = tools.unify_fields_cl(self.sims, self.cov_pf, self.is_diag)
 
 
         # Mask Cl's
@@ -108,6 +108,9 @@ class CFHTLens_KL(Likelihood):
         factor = (self.n_sims-self.n_data-2.)/(self.n_sims-1.)
         self.inv_cov_mat = factor*np.linalg.inv(cov)
 
+
+        self.mcm_path = os.path.join(self.data_directory, self.mcm)
+
         # end of initialization
 
 
@@ -115,33 +118,37 @@ class CFHTLens_KL(Likelihood):
     # compute likelihood
 
     def loglkl(self, cosmo, data):
-        print self.inv_cov_mat.shape
-        #print cosmo.pars
-        #print data.mcmc_parameters['h']['prior'].prior_type
-        #print cosmo.pars['h']
-        #print data.mcmc_parameters['h']
-        #print data.get_mcmc_parameters(['fixed'])
-#        print cosmo.get_current_derived_parameters(['sigma8'])
 
-        chi2 = 0.
-        #print(cosmo.pars)
+        if self.method in ['kl_off_diag', 'kl_diag']:
+            theory_cls = cosmo.get_theory_cl(self.photo_z,
+                self.bandpowers,
+                self.mcm_path,
+                self.method,
+                self.is_diag,
+                self.cov_pf,
+                self.mask_ell,
+                kl_t=self.kl_t,
+                kl_scale_dep=self.kl_scale_dep,
+                n_kl=self.n_kl)
+        else:
+            theory_cls = cosmo.get_theory_cl(self.photo_z,
+                self.bandpowers,
+                self.mcm_path,
+                self.method,
+                self.is_diag,
+                self.cov_pf,
+                self.mask_ell)
 
-        # for each point, compute growth rate f, power spectrum normalization sig8,
-        # theoretical prediction and chi2 contribution
+        # Calculate Gaussian prior for Intrinsic Alignement
+        if cosmo.pars['A_IA'] !=0:
+            lp = (cosmo.pars['beta_IA']-cosmo.pars['beta_IA_prior'][0])**2./2./cosmo.pars['beta_IA_prior'][1]**2.
+        else:
+            lp = 0.
 
-        # for i in range(self.num_points):
-        #
-        #     #s8 = cosmo.sigma8_at_z(self.z[i])
-        #     #f  = cosmo.growthrate_at_z(self.z[i])
-        #     f = 1.
-        #     s8 = 0.8
-        #     theo = f*s8
-        #
-        #     chi2 += ((theo - self.data[i]) / self.error[i]) ** 2
+        #Get chi2
+        chi2 = (self.cls-theory_cls).dot(self.inv_cov_mat).dot(self.cls-theory_cls)
 
-        # return ln(L)
-        lkl = - 0.5 * chi2
+
+        lkl = lp - 0.5 * chi2
+
         return lkl
-
-
-    # Useful functions
