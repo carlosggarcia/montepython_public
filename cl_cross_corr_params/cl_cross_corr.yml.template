@@ -1,0 +1,161 @@
+# Tracers
+maps:
+
+    - name: 'DESgc0'
+      # 'gc' for galaxies, 'wl' for weak lensing, 'cv' for convergence
+      type: 'gc'
+      # redshift bin
+      bin: 0
+      # dndz file
+      dndz_file: 'des_clustering/dndz_bin0.txt'
+      # ell_cuts
+      ell_cuts: [0, 105]
+
+    - name: 'DESgc1'
+      # 'gc' for galaxies, 'wl' for weak lensing, 'cv' for convergence
+      type: 'gc'
+      # redshift bin
+      bin: 1
+      # dndz file
+      dndz_file: 'des_clustering/dndz_bin1.txt'
+      # ell_cuts
+      ell_cuts: [0, 155]
+
+    - name: 'DESgc2'
+      # 'gc' for galaxies, 'wl' for weak lensing, 'cv' for convergence
+      type: 'gc'
+      # redshift bin
+      bin: 2
+      # dndz file
+      dndz_file: 'des_clustering/dndz_bin2.txt'
+      # ell_cuts
+      ell_cuts: [0, 214]
+
+    - name: 'DESgc3'
+      # 'gc' for galaxies, 'wl' for weak lensing, 'cv' for convergence
+      type: 'gc'
+      # redshift bin
+      bin: 3
+      # dndz file
+      dndz_file: 'des_clustering/dndz_bin3.txt'
+      # ell_cuts
+      ell_cuts: [0, 255]
+
+    - name: 'DESgc4'
+      # 'gc' for galaxies, 'wl' for weak lensing, 'cv' for convergence
+      type: 'gc'
+      # redshift bin
+      bin: 4
+      # dndz file
+      dndz_file: 'des_clustering/dndz_bin4.txt'
+      # ell_cuts
+      ell_cuts: [0, 304]
+
+    - name: 'DESwl0'
+      # 'gc' for galaxies, 'wl' for weak lensing, 'cv' for convergence
+      type: 'wl'
+      # redshift bin
+      bin: 0
+      # dndz file
+      dndz_file: 'des_shear/dndz_metacal_bin0.txt'
+      # ell_cuts
+      ell_cuts: [0, 200]
+
+    - name: 'DESwl1'
+      # 'gc' for galaxies, 'wl' for weak lensing, 'cv' for convergence
+      type: 'wl'
+      # redshift bin
+      bin: 1
+      # dndz file
+      dndz_file: 'des_shear/dndz_metacal_bin1.txt'
+      # ell_cuts
+      ell_cuts: [0, 200]
+
+    - name: 'DESwl2'
+      # 'gc' for galaxies, 'wl' for weak lensing, 'cv' for convergence
+      type: 'wl'
+      # redshift bin
+      bin: 2
+      # dndz file
+      dndz_file: 'des_shear/dndz_metacal_bin2.txt'
+      # ell_cuts
+      ell_cuts: [0, 200]
+
+    - name: 'DESwl3'
+      # 'gc' for galaxies, 'wl' for weak lensing, 'cv' for convergence
+      type: 'wl'
+      # redshift bin
+      bin: 3
+      # dndz file
+      dndz_file: 'des_shear/dndz_metacal_bin3.txt'
+      # ell_cuts
+      ell_cuts: [0, 200]
+
+    - name: 'PLAcv'
+      # 'gc' for galaxies, 'wl' for weak lensing, 'cv' for convergence
+      type: 'cv'
+      # ell_cuts
+      ell_cuts: [0, 2000]
+
+
+
+# List all the different combinations of power spectra you want to analyze
+data_vectors:
+
+    # gc -gc
+    - tracers: ['DESgc0', 'DESgc0']
+    - tracers: ['DESgc1', 'DESgc1']
+    - tracers: ['DESgc2', 'DESgc2']
+    - tracers: ['DESgc3', 'DESgc3']
+    - tracers: ['DESgc4', 'DESgc4']
+
+    # gc -wl
+    - tracers: ['DESgc0', 'DESwl0']
+    - tracers: ['DESgc0', 'DESwl1']
+    - tracers: ['DESgc0', 'DESwl2']
+    - tracers: ['DESgc0', 'DESwl3']
+    - tracers: ['DESgc1', 'DESwl0']
+    - tracers: ['DESgc1', 'DESwl1']
+    - tracers: ['DESgc1', 'DESwl2']
+    - tracers: ['DESgc1', 'DESwl3']
+    - tracers: ['DESgc2', 'DESwl0']
+    - tracers: ['DESgc2', 'DESwl1']
+    - tracers: ['DESgc2', 'DESwl2']
+    - tracers: ['DESgc2', 'DESwl3']
+    - tracers: ['DESgc3', 'DESwl0']
+    - tracers: ['DESgc3', 'DESwl1']
+    - tracers: ['DESgc3', 'DESwl2']
+    - tracers: ['DESgc3', 'DESwl3']
+    - tracers: ['DESgc4', 'DESwl0']
+    - tracers: ['DESgc4', 'DESwl1']
+    - tracers: ['DESgc4', 'DESwl2']
+    - tracers: ['DESgc4', 'DESwl3']
+
+    # gc -cv
+    - tracers: ['DESgc0', 'PLAcv']
+    - tracers: ['DESgc1', 'PLAcv']
+    - tracers: ['DESgc2', 'PLAcv']
+    - tracers: ['DESgc3', 'PLAcv']
+    - tracers: ['DESgc4', 'PLAcv']
+
+    # wl -wl
+    - tracers: ['DESwl0', 'DESwl0']
+    - tracers: ['DESwl0', 'DESwl1']
+    - tracers: ['DESwl0', 'DESwl2']
+    - tracers: ['DESwl0', 'DESwl3']
+    - tracers: ['DESwl1', 'DESwl1']
+    - tracers: ['DESwl1', 'DESwl2']
+    - tracers: ['DESwl1', 'DESwl3']
+    - tracers: ['DESwl2', 'DESwl2']
+    - tracers: ['DESwl2', 'DESwl3']
+    - tracers: ['DESwl3', 'DESwl3']
+
+    # wl -cv
+    - tracers: ['DESwl0', 'PLAcv']
+    - tracers: ['DESwl1', 'PLAcv']
+    - tracers: ['DESwl2', 'PLAcv']
+    - tracers: ['DESwl3', 'PLAcv']
+
+    # cv -cv
+    # WARNING: DONT USE IT AT THIS MOMENT! NO NUISANCE PARAMS IMPLEMENTED
+    # - tracers: ['PLAcv', 'PLAcv']

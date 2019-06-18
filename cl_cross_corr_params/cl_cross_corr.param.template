@@ -1,0 +1,75 @@
+#------ Experiments ------
+
+data.experiments=['cl_cross_corr']
+data.over_sampling=[]
+
+
+
+#------ Cosmo Parameters ------
+
+data.parameters['h']        = [ 0.685000,    None,    None,     0.0,  1.,  'cosmo']
+data.parameters['Omega_c']  = [ 0.250000, 0.24000, 0.30000,   0.002,  1.,  'cosmo']
+data.parameters['Omega_b']  = [ 0.047900,    None,    None,     0.0,  1.,  'cosmo']
+data.parameters['sigma_8']  = [ 0.805000, 0.80000, 0.88000,   0.002,  1.,  'cosmo']
+data.parameters['n_s']      = [ 0.973000,    None,    None,     0.0,  1.,  'cosmo']
+
+#data.parameters['ln10_A_s'] = [ 3.044522,    None,    None,     0.1,  1.,  'cosmo']
+data.parameters['w_0']      = [-1.000000,    None,    None,     0.0,  1.,  'cosmo']
+data.parameters['w_a']      = [ 0.000000,    None,    None,     0.0,  1.,  'cosmo']
+
+
+#------ Cosmo Arguments ------
+
+data.cosmo_arguments['params_dir']  = 'cl_cross_corr_params/cl_cross_corr.yml'
+
+
+#------ Nuisance Parameters ------
+
+#data.parameters['gc_b_0']         = [ 1.000000,    None,    None,     0.0,  1.,  'nuisance']
+#data.parameters['gc_b_1']         = [ 1.000000,    None,    None,     0.0,  1.,  'nuisance']
+#data.parameters['gc_b_2']         = [ 1.000000,    None,    None,     0.0,  1.,  'nuisance']
+#data.parameters['gc_b_3']         = [ 1.000000,    None,    None,     0.0,  1.,  'nuisance']
+#data.parameters['gc_b_4']         = [ 1.000000,    None,    None,     0.0,  1.,  'nuisance']
+data.parameters['gc_b_0']         = [ 1.410000,    None,    None,     0.0,  1.,  'nuisance']
+data.parameters['gc_b_1']         = [ 1.610000,    None,    None,     0.0,  1.,  'nuisance']
+data.parameters['gc_b_2']         = [ 1.610000,    None,    None,     0.0,  1.,  'nuisance']
+data.parameters['gc_b_3']         = [ 1.940000,    None,    None,     0.0,  1.,  'nuisance']
+data.parameters['gc_b_4']         = [ 1.990000,    None,    None,     0.0,  1.,  'nuisance']
+
+data.parameters['gc_dz_0']         = [ 0.000000,    None,    None,     0.0,  1.,  'nuisance']
+data.parameters['gc_dz_1']         = [ 0.000000,    None,    None,     0.0,  1.,  'nuisance']
+data.parameters['gc_dz_2']         = [ 0.000000,    None,    None,     0.0,  1.,  'nuisance']
+data.parameters['gc_dz_3']         = [ 0.000000,    None,    None,     0.0,  1.,  'nuisance']
+data.parameters['gc_dz_4']         = [ 0.000000,    None,    None,     0.0,  1.,  'nuisance']
+
+data.parameters['wl_ia_A']        = [ 1.000000,    None,    None,     0.0,  1.,  'nuisance']
+data.parameters['wl_ia_eta']      = [ 0.000000,    None,    None,     0.0,  1.,  'nuisance']
+data.parameters['wl_ia_z0']       = [ 0.620000,    None,    None,     0.0,  1.,  'nuisance']
+
+data.parameters['wl_m_0']         = [ 0.000000,    None,    None,     0.0,  1.,  'nuisance']
+data.parameters['wl_m_1']         = [ 0.000000,    None,    None,     0.0,  1.,  'nuisance']
+data.parameters['wl_m_2']         = [ 0.000000,    None,    None,     0.0,  1.,  'nuisance']
+data.parameters['wl_m_3']         = [ 0.000000,    None,    None,     0.0,  1.,  'nuisance']
+
+data.parameters['wl_dz_0']         = [ 0.000000,    None,    None,     0.0,  1.,  'nuisance']
+data.parameters['wl_dz_1']         = [ 0.000000,    None,    None,     0.0,  1.,  'nuisance']
+data.parameters['wl_dz_2']         = [ 0.000000,    None,    None,     0.0,  1.,  'nuisance']
+data.parameters['wl_dz_3']         = [ 0.000000,    None,    None,     0.0,  1.,  'nuisance']
+
+
+
+
+
+#------ Derived Parameters ------
+
+#data.parameters['sigma_8']  = [  1.,  None,  None,  0.,  1.,  'derived']
+data.parameters['Omega_m']  = [  1.,  None,  None,  0.,  1.,  'derived']
+data.parameters['S_8']      = [  1.,  None,  None,  0.,  1.,  'derived']
+
+
+
+#------ Mcmc parameters ------
+
+data.N=10
+data.write_step=5
+                                                                                                                                                                                                                       205,1         Bot

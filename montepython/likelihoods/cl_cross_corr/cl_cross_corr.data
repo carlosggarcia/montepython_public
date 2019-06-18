@@ -1,0 +1,38 @@
+# cl_cross_corr data
+
+cl_cross_corr.cov_cls         = '/mnt/extraspace/gravityls_3/S8z/Cls/all_together'
+cl_cross_corr.dndz            = '/mnt/extraspace/damonge/S8z_data/derived_products'
+
+cl_cross_corr.use_nuisance = ['gc_b_0', 'gc_b_1', 'gc_b_2', 'gc_b_3', 'gc_b_4', 'wl_m_0', 'wl_m_1', 'wl_m_2', 'wl_m_3', 'wl_ia_A', 'wl_ia_eta', 'wl_ia_z0', 'wl_dz_0', 'wl_dz_1', 'wl_dz_2', 'wl_dz_3']
+
+cl_cross_corr.gc_dz_0_prior_center   = 0.
+cl_cross_corr.gc_dz_1_prior_center   = 0.
+cl_cross_corr.gc_dz_2_prior_center   = 0.
+cl_cross_corr.gc_dz_3_prior_center   = 0.
+cl_cross_corr.gc_dz_4_prior_center   = 0.
+
+cl_cross_corr.gc_dz_0_prior_variance = 0.007
+cl_cross_corr.gc_dz_1_prior_variance = 0.007
+cl_cross_corr.gc_dz_2_prior_variance = 0.006
+cl_cross_corr.gc_dz_3_prior_variance = 0.010
+cl_cross_corr.gc_dz_4_prior_variance = 0.010
+
+cl_cross_corr.wl_dz_0_prior_center   = -0.001
+cl_cross_corr.wl_dz_1_prior_center   = -0.019
+cl_cross_corr.wl_dz_2_prior_center   = 0.009
+cl_cross_corr.wl_dz_3_prior_center   = -0.018
+
+cl_cross_corr.wl_dz_0_prior_variance = 0.016
+cl_cross_corr.wl_dz_1_prior_variance = 0.013
+cl_cross_corr.wl_dz_2_prior_variance = 0.011
+cl_cross_corr.wl_dz_3_prior_variance = 0.022
+
+cl_cross_corr.wl_m_0_prior_center   = 0.012
+cl_cross_corr.wl_m_1_prior_center   = 0.012
+cl_cross_corr.wl_m_2_prior_center   = 0.012
+cl_cross_corr.wl_m_3_prior_center   = 0.012
+
+cl_cross_corr.wl_m_0_prior_variance = 0.023
+cl_cross_corr.wl_m_1_prior_variance = 0.023
+cl_cross_corr.wl_m_2_prior_variance = 0.023
+cl_cross_corr.wl_m_3_prior_variance = 0.023
