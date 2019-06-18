@@ -1,0 +1,2 @@
+# covfefe data
+covfefe.data_directory      = data.path['data']+'/covfefe'

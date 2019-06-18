@@ -1,0 +1,8 @@
+# CFHTLens_KL_badfit data
+CFHTLens_KL_badfit.data_directory      = data.path['data']+'/CFHTLens_KL'
+CFHTLens_KL_badfit.file                = 'data_fourier_badfit.fits'
+CFHTLens_KL_badfit.mcm                 = 'mcm_'
+
+CFHTLens_KL_badfit.mask_ell            = [False,  True,  True,  True,  True,  True, False]
+
+CFHTLens_KL_badfit.bandpowers = [[  30,   80], [  80,  260], [ 260,  450], [ 450,  670], [ 670, 1310], [1310, 2300], [2300, 5100]]

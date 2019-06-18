@@ -1,180 +1,106 @@
-import re
+import re, os
 import random
 import numpy as np
 import pymaster as nmt
+import pyccl as ccl
 
 
-
-def read_bool(value):
-    if re.match('y.+', value, re.IGNORECASE):
-        return True
-    elif re.match('n.+', value, re.IGNORECASE):
-        return False
-    else:
-        raise IOError('Boolean type not recognized!')
-
-
-def how_many_sims(n_sims, n_sims_tot, n_data, n_data_tot):
-    # If all simulations wanted, return it
-    if n_sims=='all':
-        return n_sims_tot
-
-    # If auto, calculate how many sims should be used
-    elif n_sims=='auto':
-        ratio = (n_sims_tot-n_data_tot-2.)/(n_sims_tot-1.)
-        return int(round((2.+n_data-ratio)/(1.-ratio)))
-
-    # If it is a number, just return it
-    else:
-        return int(n_sims)
+default_pars = {
+    'h'               :  0.67,
+    'Omega_c'         :  0.27,
+    'Omega_b'         :  0.045,
+    # 'ln10_A_s'        :  3.044522,
+    'sigma_8'          :  0.840421163375,
+    'n_s'             :  0.96,
+    'w_0'             : -1.0,
+    'w_a'             :  0.0
+}
 
 
-def clean_cl(cl, noise):
-    if cl.ndim==4:
-        return cl - noise
-    elif cl.ndim==5:
-        clean = np.array([cl[:,x]-noise for x in range(len(cl[0]))])
-        clean = np.transpose(clean,axes=(1,0,2,3,4))
-        return clean
-    else:
-        raise ValueError('Expected Cl\'s array with dimensions 4 or 5. Found {}'.format(cl.ndim))
+def nofz(z,z0,sz,ndens):
+    return np.exp(-0.5*((z-z0)/sz)**2)*ndens/np.sqrt(2*np.pi*sz**2)
 
 
-def apply_kl(kl_t, corr, method, scale_dep, n_kl):
-    kl_t_T = np.moveaxis(kl_t,[-1],[-2])
-
-    # Apply KL transform
-    corr_kl = np.dot(kl_t,corr)
-    if scale_dep:
-        corr_kl = np.diagonal(corr_kl,axis1=0,axis2=-2)
-        corr_kl = np.moveaxis(corr_kl,[-1],[-2])
-    corr_kl = np.dot(corr_kl,kl_t_T)
-    if scale_dep:
-        corr_kl = np.diagonal(corr_kl,axis1=-3,axis2=-2)
-        corr_kl = np.moveaxis(corr_kl,[-1],[-2])
-    corr_kl = np.moveaxis(corr_kl,[0],[-2])
-
-    # Reduce dimensions of the array
-    corr_kl = np.moveaxis(corr_kl,[-2,-1],[0,1])
-    corr_kl = corr_kl[:n_kl,:n_kl]
-    corr_kl = np.moveaxis(corr_kl,[0,1],[-2,-1])
-    if method == 'kl_diag':
-        corr_kl = np.diagonal(corr_kl,  axis1=-2, axis2=-1)
-
-    return corr_kl
+def flatten_cls(cls, n_bte, n_ells):
+    flat_cls = np.moveaxis(cls,[-3,-2,-1],[0,1,2])
+    flat_cls = flat_cls[np.triu_indices(n_bte)]
+    flat_cls = flat_cls.reshape(((n_bte+1)*n_bte*n_ells/2,)+cls.shape[:-3])
+    return flat_cls
 
 
-def select_sims(sims, n_sims):
-
-    # Select simulations
-    rnd = random.sample(range(sims.shape[1]), n_sims)
-    less_sims = sims[:,rnd]
-
-    return less_sims
-
-
-def flatten_cl(cl, is_diag):
-    flat_cl = cl
-    if not is_diag:
-        tr_idx = np.triu_indices(cl.shape[-1])
-        flat_cl = np.moveaxis(flat_cl,[-2,-1],[0,1])
-        flat_cl = flat_cl[tr_idx]
-        flat_cl = np.moveaxis(flat_cl,[0],[-1])
-    flat_cl = flat_cl.reshape(flat_cl.shape[:-2]+(flat_cl.shape[-2]*flat_cl.shape[-1],))
-    return flat_cl
+def get_cosmo_ccl(pars):
+    cosmo = ccl.Cosmology(
+        h        = pars['h'],
+        Omega_c  = pars['Omega_c'],
+        Omega_b  = pars['Omega_b'],
+        sigma8   = pars['sigma_8'],
+        # A_s      = (10.**(-10.))*np.exp(pars['ln10_A_s']),
+        n_s      = pars['n_s'],
+        w0       = pars['w_0'],
+        wa       = pars['w_a']
+        )
+    ccl.linear_matter_power(cosmo,0.1,0.5)
+    return cosmo
 
 
-def unflatten_cl(cl, shape, is_diag):
-    if is_diag:
-        unflat_cl = cl.reshape(shape)
-    else:
-        tr_idx = np.triu_indices(shape[-1])
-        unflat_cl = np.zeros(shape)
-        tmp_cl = cl.reshape(shape[:-2]+(-1,))
-        tmp_cl = np.moveaxis(tmp_cl,[-1],[0])
-        unflat_cl = np.moveaxis(unflat_cl,[-2,-1],[0,1])
-        unflat_cl[tr_idx] = tmp_cl
-        unflat_cl = np.moveaxis(unflat_cl,[1],[0])
-        unflat_cl[tr_idx] = tmp_cl
-        unflat_cl = np.moveaxis(unflat_cl,[0,1],[-2,-1])
-    return unflat_cl
+def get_tracers_ccl(cosmo, z, pz, bz):
+    n_bins = pz.shape[0]
+    # Tracers
+    tracers = []
+    for i in range(n_bins):
+        tracers.append(
+            ccl.NumberCountsTracer(cosmo,has_rsd=False,dndz=(z[i],pz[i]),bias=(z[i],bz[i]))
+            )
+        tracers.append(
+            ccl.WeakLensingTracer(cosmo,dndz=(z[i],pz[i]))
+            )
+    return np.array(tracers)
 
 
-def flatten_covmat(cov, is_diag):
-    if is_diag:
-        flat_cov = np.moveaxis(cov,[-3,-2],[-2,-3])
-        idx = 2
-    else:
-        flat_cov = np.moveaxis(cov,[-5,-4,-3,-2],[-3,-5,-2,-4])
-        idx = 3
-    flat_cov = flatten_cl(flat_cov, is_diag)
-    flat_cov = np.moveaxis(flat_cov,[-1],[-1-idx])
-    flat_cov = flatten_cl(flat_cov, is_diag)
-    return flat_cov
+def get_cls_ccl(cosmo, tracers, ell_bp):
+    n_bte = tracers.shape[0]
+    n_ells = len(ell_bp)
+    cls = np.zeros([n_bte, n_bte, n_ells])
+
+    for c1 in range(n_bte): # c1=te1+b1*n_te
+        for c2 in range(c1, n_bte):
+            cls[c1,c2,:] = ccl.angular_cl(cosmo,tracers[c1],tracers[c2],ell_bp)
+            cls[c2,c1,:] = cls[c1,c2,:]
+    cls_flat = flatten_cls(cls, n_bte, n_ells)
+    return cls_flat
 
 
-def unflatten_covmat(cov, cl_shape, is_diag):
-    unflat_cov = np.apply_along_axis(unflatten_cl, -1, cov, cl_shape, is_diag)
-    unflat_cov = np.apply_along_axis(unflatten_cl, -1-len(cl_shape), unflat_cov, cl_shape, is_diag)
-    if is_diag:
-        unflat_cov = np.moveaxis(unflat_cov,[-3,-2],[-2,-3])
-    else:
-        unflat_cov = np.moveaxis(unflat_cov,[-5,-4,-3,-2],[-4,-2,-5,-3])
-    return unflat_cov
+# Get data
+dir = os.path.abspath('.')+'/data/covfefe/'
 
+# Ells
+ell_bp = np.load(os.path.join(dir, 'ell_bp.npz'))['lsims']
 
-def get_covmat(sims, is_diag):
-    sims_flat = flatten_cl(sims, is_diag)
-    if len(sims_flat.shape) == 2:
-        cov = np.cov(sims_flat.T,bias=True)
-    elif len(sims_flat.shape) == 3:
-        cov = np.array([np.cov(x.T,bias=True) for x in sims_flat])
-    else:
-        raise ValueError('Input dimensions can be either 2 or 3, found {}'.format(len(sims_flat.shape)))
-    if is_diag:
-        shape = sims.shape[-2:]
-    else:
-        shape = sims.shape[-3:]
-    return unflatten_covmat(cov, shape, is_diag)
+for n_bins in range(1,3):
+    # Build photo_z
+    z    = np.tile(np.linspace(0,3,512),[n_bins,1])
+    cosmo = get_cosmo_ccl(default_pars)
+    bz_ref=0.95*ccl.growth_factor(cosmo,1.)/ccl.growth_factor(cosmo,1./(1+z[0]))
+    if n_bins==1:
+        pz = np.array([
+            nofz(z[0],0.955,0.13,7.55)
+        ])
+        bz = np.tile(0.65*bz_ref,[1,1])
+    elif n_bins==2:
+        pz = np.array([
+            nofz(z[0],0.955,0.13,7.55),
+            nofz(z[1],0.755,0.13,7.55)
+        ])
+        bz = np.tile(bz_ref,[2,1])
+    np.savez_compressed(os.path.join(dir, 'z_{}'.format(n_bins)), z)
+    np.savez_compressed(dir+'pz_{}'.format(n_bins), pz)
+    np.savez_compressed(dir+'bz_{}'.format(n_bins), bz)
 
-
-def unify_fields_cl(cl, cov_pf, is_diag):
-    cl_flat = flatten_cl(cl, is_diag)
-    cov = flatten_covmat(cov_pf, is_diag)
-    inv_cov = np.array([np.linalg.inv(x) for x in cov])
-    tot_inv_cov = np.sum(inv_cov,axis=0)
-    tot_cl = np.array([np.linalg.solve(cov[x], cl_flat[x].T) for x in range(len(cl))])
-    tot_cl = np.sum(tot_cl, axis=0)
-    tot_cl = np.linalg.solve(tot_inv_cov, tot_cl).T
-    tot_cl = unflatten_cl(tot_cl, cl.shape[1:], is_diag)
-    return tot_cl
-
-
-def mask_cl(cl, mask, is_diag):
-    if is_diag:
-        idx = -2
-    else:
-        idx = -3
-    mask_cl = np.moveaxis(cl,[idx],[0])
-    mask_cl = mask_cl[mask]
-    mask_cl = np.moveaxis(mask_cl,[0],[idx])
-    return mask_cl
-
-
-def couple_decouple_cl(ell, cl, mcm_path, n_bins, n_bp, n_fields=4):
-    nmt_cl = np.moveaxis(cl,[0],[-1])
-    nmt_cl = np.stack((nmt_cl,np.zeros(nmt_cl.shape),np.zeros(nmt_cl.shape),np.zeros(nmt_cl.shape)))
-    nmt_cl = np.moveaxis(nmt_cl,[0],[-2])
-    final_cl = np.zeros((n_fields, n_bins, n_bins, n_bp))
-    for nb1 in range(n_bins):
-        for nb2 in range(nb1,n_bins):
-            for nf in range(n_fields):
-                wf = nmt.NmtWorkspaceFlat()
-                wf.read_from(mcm_path+'W{}_Z{}{}.dat'.format(nf+1,nb1+1,nb2+1))
-                cl_pfb = wf.couple_cell(ell, nmt_cl[nb1,nb2])
-                cl_pfb = wf.decouple_cell(cl_pfb)
-                final_cl[nf, nb1, nb2] = cl_pfb[0]
-                final_cl[nf, nb2, nb1] = cl_pfb[0]
-    final_cl = np.moveaxis(final_cl,[-1],[-3])
-
-    return final_cl
+    # Build data
+    tracers = get_tracers_ccl(cosmo, z, pz, bz)
+    data = get_cls_ccl(cosmo, tracers, ell_bp)
+    cov = np.load(os.path.join(dir, 'cov_sim_{}.npz'.format(n_bins)))['arr_0']
+    L = np.linalg.cholesky(cov)
+    u = np.random.randn(2*n_bins*(2*n_bins+1)/2*len(ell_bp))
+    data = data# + L.dot(u)
+    np.savez_compressed(dir+'cls_{}'.format(n_bins), data)
