@@ -59,7 +59,7 @@ data.parameters['wl_m_3']         = [ -0.02,    None,    None,     0.018 ,  1., 
 # Using parameters from priors in Table I DES18 paper
 data.parameters['wl_dz_0']         = [ -0.001,    None,    None,  0.016,  1.,  'nuisance']
 data.parameters['wl_dz_1']         = [ -0.019,    None,    None,  0.013,  1.,  'nuisance']
-data.parameters['wl_dz_2']         = [ 0.009,,    None,    None,  0.011,  1.,  'nuisance']
+data.parameters['wl_dz_2']         = [ 0.009,    None,    None,  0.011,  1.,  'nuisance']
 data.parameters['wl_dz_3']         = [ -0.018,    None,    None,  0.022,  1.,  'nuisance']
 
 
