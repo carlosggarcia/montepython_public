@@ -11,7 +11,7 @@ data.parameters['Omega_b']  = [ 0.047900, 0.03,    0.07,   0.028,  1.,  'cosmo']
 data.parameters['Omega_c']  = [ 0.250000, 0.07,    0.83,   0.0027,  1.,  'cosmo']
 
 # Using aprox results in Fig. 7 DES18 paper + bounds in Table I
-data.parameters['A_s']      = [ 2.8, 0.5,       5,     0.3,  1e-9.,  'cosmo']
+data.parameters['A_s']      = [ 2.8, 0.5,       5,     0.3,  1e-9,  'cosmo']
 # Planck 18 + DES18 priors in Table I
 data.parameters['n_s']      = [ 0.965000, 0.87,    1.07,   0.004,  1.,  'cosmo']
 
