@@ -46,7 +46,7 @@ data.parameters['gc_dz_3']         = [ 0.000000,    None,    None,     0.010,  1
 data.parameters['gc_dz_4']         = [ 0.000000,    None,    None,     0.010,  1.,  'nuisance']
 
 # Using aprox results in Fig. 7 DES18 paper
-data.parameters['wl_ia_A']        = [ 0.5,    -5.0,    5.0,     0.25,  'nuisance']
+data.parameters['wl_ia_A']        = [ 0.5,    -5.0,    5.0,     0.25, 1., 'nuisance']
 data.parameters['wl_ia_eta']      = [ 0.0,    -5.0,    5.0,     3.2,  1.,  'nuisance']
 data.parameters['wl_ia_z0']       = [ 0.620000,    None,    None,     0.0,  1.,  'nuisance']
 
