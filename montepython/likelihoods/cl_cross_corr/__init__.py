@@ -109,6 +109,9 @@ class cl_cross_corr(Likelihood):
                 pname = 'gc_dz_{}'.format(tr['bin'])
                 dz = data.mcmc_parameters[pname]['current']*data.mcmc_parameters[pname]['scale']
                 z_dz = z-dz
+                # Set to 0 points where z_dz < 0:
+                z_dz[z_dz < 0] = 0
+                pz[z_dz < 0] = 0
                 # Calculate bias
                 pname = 'gc_b_{}'.format(tr['bin'])
                 bias = data.mcmc_parameters[pname]['current']*data.mcmc_parameters[pname]['scale']
@@ -123,6 +126,9 @@ class cl_cross_corr(Likelihood):
                 pname = 'wl_dz_{}'.format(tr['bin'])
                 dz = data.mcmc_parameters[pname]['current']*data.mcmc_parameters[pname]['scale']
                 z_dz = z-dz
+                # Set to 0 points where z_dz < 0:
+                z_dz[z_dz < 0] = 0
+                pz[z_dz < 0] = 0
                 # Calculate bias IA
                 A = data.mcmc_parameters['wl_ia_A']['current']*data.mcmc_parameters['wl_ia_A']['scale']
                 eta = data.mcmc_parameters['wl_ia_eta']['current']*data.mcmc_parameters['wl_ia_eta']['scale']
