@@ -21,8 +21,9 @@ class CCL():
             'h'               :  0.67,
             'Omega_c'         :  0.27,
             'Omega_b'         :  0.045,
+            'A_s'             :  2.8,
             # 'ln10_A_s'        :  3.044522,
-            'sigma_8'          :  0.840421163375,
+            # 'sigma_8'          :  0.840421163375,
             'n_s'             :  0.96,
             'w_0'             : -1.0,
             'w_a'             :  0.0
@@ -34,8 +35,9 @@ class CCL():
             h        = self.pars['h'],
             Omega_c  = self.pars['Omega_c'],
             Omega_b  = self.pars['Omega_b'],
-            sigma8   = self.pars['sigma_8'],
+            # sigma8   = self.pars['sigma_8'],
             # A_s      = (10.**(-10.))*np.exp(self.pars['ln10_A_s']),
+            A_s      = self.pars['A_s'],
             n_s      = self.pars['n_s'],
             w0       = self.pars['w_0'],
             wa       = self.pars['w_a']
