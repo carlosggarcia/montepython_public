@@ -94,10 +94,19 @@ class cl_cross_corr(Likelihood):
         # end of initialization
 
 
+    def get_loggaussprior(self, value, name):
+        center = '{}_prior_center'.format(name)
+        var = '{}_prior_variance'.format(name)
+        lp = (value-eval('self.'+center))**2./2./eval('self.'+var)**2.
+        return lp
+
 
     # compute likelihood
 
     def loglkl(self, cosmo, data):
+
+        # Initialize logprior
+        lp = 0.
 
         # Get Tracers
         for tr in self.params['maps']:
@@ -109,6 +118,8 @@ class cl_cross_corr(Likelihood):
                 pname = 'gc_dz_{}'.format(tr['bin'])
                 dz = data.mcmc_parameters[pname]['current']*data.mcmc_parameters[pname]['scale']
                 z_dz = z-dz
+                # Get log prior for dz
+                lp = lp + self.get_loggaussprior(dz, pname)
                 # Set to 0 points where z_dz < 0:
                 sel = z_dz >= 0
                 z_dz = z_dz[sel]
@@ -127,6 +138,12 @@ class cl_cross_corr(Likelihood):
                 pname = 'wl_dz_{}'.format(tr['bin'])
                 dz = data.mcmc_parameters[pname]['current']*data.mcmc_parameters[pname]['scale']
                 z_dz = z-dz
+                # Get log prior for dz
+                lp = lp + self.get_loggaussprior(dz, pname)
+                # Get log prior for m
+                pname = 'wl_m_{}'.format(tr['bin'])
+                value = data.mcmc_parameters[pname]['current']*data.mcmc_parameters[pname]['scale']
+                lp = lp + self.get_loggaussprior(value, pname)
                 # Set to 0 points where z_dz < 0:
                 sel = z_dz >= 0
                 z_dz = z_dz[sel]
@@ -169,8 +186,8 @@ class cl_cross_corr(Likelihood):
             theory = np.append(theory,cls)
 
         # Get chi2
-        print(len(theory))
         chi2 = (self.data-theory).dot(self.icov).dot(self.data-theory)
-        lkl = - 0.5 * chi2
+
+        lkl = lp - 0.5 * chi2
 
         return lkl
