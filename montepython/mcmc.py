@@ -793,13 +793,13 @@ def chain(cosmo, data, command_line):
                 #     print 'Stuck! Could not calculate the likelihood in ', tmout, ' secs for chain ', rank+1#EB
                 #     print data.cosmo_arguments#EB
                 # signal.alarm(0)#EB
-                try:#EB
-                    newloglike = sampler.compute_lkl(cosmo, data)#EB
-                except:#EB
-                    newloglike = data.boundary_loglike#EB
-                    print 'Error! Could not calculate the likelihood for parameters:'#EB
-                    print data.cosmo_arguments#EB
-                # newloglike = sampler.compute_lkl(cosmo, data)#EB: uncomment this
+                # try:#EB
+                #     newloglike = sampler.compute_lkl(cosmo, data)#EB
+                # except:#EB
+                #     newloglike = data.boundary_loglike#EB
+                #     print 'Error! Could not calculate the likelihood for parameters:'#EB
+                #     print data.cosmo_arguments#EB
+                newloglike = sampler.compute_lkl(cosmo, data)#EB: uncomment this
         else:  # reject step
             rej += 1
             if command_line.superupdate:

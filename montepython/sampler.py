@@ -743,11 +743,10 @@ def compute_lkl(cosmo, data):
             except CosmoComputationError as failure_message:
                 # could be useful to uncomment for debugging:#EB
                 np.set_printoptions(precision=30, linewidth=150)#EB
-                print 'cosmo params'#EB
+                # print 'cosmo params'#EB
                 print data.cosmo_arguments#EB
-                print data.cosmo_arguments['tau_reio']#EB
-                sys.stderr.write(str(failure_message)+'\n')
-                sys.stderr.flush()
+                # sys.stderr.write(str(failure_message)+'\n')
+                # sys.stderr.flush()
                 return data.boundary_loglike
             except CosmoSevereError as critical_message:
                 raise io_mp.CosmologicalModuleError(

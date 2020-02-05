@@ -167,7 +167,7 @@ class Data(object):
         :rtype: dict
         """
 
-        # Arguments for PyPolyChord 
+        # Arguments for PyPolyChord
         self.PC_param_names = []
         self.PC_arguments = {}
         """
@@ -930,14 +930,16 @@ class Data(object):
             # double underscore, concatenated with each other. The test is
             # always on the one ending with __1, as it will be the first on the
             # list, and deal with all the others.
-            elif re.search(r'__1', elem):
+            elif re.search(r'__1$', elem):
                 original_name = re.search(r'(.*)__1', elem).groups()[0]
                 # Recover the values of all the other elements
                 values = [self.cosmo_arguments[elem]]
                 for other_elem in self.get_mcmc_parameters(['cosmo']):
-                    match = re.search(r'%s__([2-9])' % original_name,
+                    match = re.search(r'%s__([0-9]+)' % original_name,
                                       other_elem)
-                    if match:
+                    match_first = re.search(r'%s__1$' % original_name,
+                                      other_elem)
+                    if match and not match_first:
                         values.append(self.cosmo_arguments[other_elem])
                 # create the cosmo_argument
                 self.cosmo_arguments[original_name] = ', '.join(
