@@ -157,7 +157,7 @@ class cl_cross_corr(Likelihood):
                 bz = A*((1.+z)/(1.+z0))**eta*0.0139*Omm/Dz #TODO: ask David about Eq 10 in 1810.02322
                 fz = np.ones(z.shape)
                 # Get tracer
-                tr['tracer'] = ccl.WeakLensingTracer(cosmo.cosmo_ccl,dndz=(z_dz,pz),ia_bias=(z,bz),red_frac=(z,fz))
+                tr['tracer'] = ccl.WeakLensingTracer(cosmo.cosmo_ccl,dndz=(z_dz,pz),ia_bias=(z,bz)) #,red_frac=(z,fz))
             elif tr['type'] == 'cv':
                 tr['tracer'] = ccl.CMBLensingTracer(cosmo.cosmo_ccl, z_source=1100)#TODO: correct z_source
             else:

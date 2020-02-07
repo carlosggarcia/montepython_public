@@ -40,7 +40,8 @@ class CCL():
             A_s      = self.pars['A_s'],
             n_s      = self.pars['n_s'],
             w0       = self.pars['w_0'],
-            wa       = self.pars['w_a']
+            wa       = self.pars['w_a'],
+            transfer_function = 'boltzmann_class'
         )
         return cosmo_ccl
 
@@ -75,7 +76,7 @@ class CCL():
 
     def compute(self, level=[]):
         self.cosmo_ccl = self.get_cosmo_ccl()
-        self.cosmo_ccl.compute_power()
+        self.cosmo_ccl.compute_linear_power()
         return
 
     def get_current_derived_parameters(self, names):
