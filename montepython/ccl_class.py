@@ -76,7 +76,8 @@ class CCL():
 
     def compute(self, level=[]):
         self.cosmo_ccl = self.get_cosmo_ccl()
-        self.cosmo_ccl.compute_linear_power()
+        # self.cosmo_ccl.compute_linear_power()
+        ccl.sigma8(self.cosmo_ccl)  # David's suggestion
         return
 
     def get_current_derived_parameters(self, names):
