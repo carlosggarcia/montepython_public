@@ -97,7 +97,7 @@ class cl_cross_corr(Likelihood):
     def get_loggaussprior(self, value, name):
         center = '{}_prior_center'.format(name)
         var = '{}_prior_variance'.format(name)
-        lp = (value-eval('self.'+center))**2./2./eval('self.'+var)**2.
+        lp = -(value-eval('self.'+center))**2./2./eval('self.'+var)**2.
         return lp
 
 
