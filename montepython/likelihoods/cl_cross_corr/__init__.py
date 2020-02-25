@@ -152,9 +152,7 @@ class cl_cross_corr(Likelihood):
                 A = data.mcmc_parameters['wl_ia_A']['current']*data.mcmc_parameters['wl_ia_A']['scale']
                 eta = data.mcmc_parameters['wl_ia_eta']['current']*data.mcmc_parameters['wl_ia_eta']['scale']
                 z0 = data.mcmc_parameters['wl_ia_z0']['current']*data.mcmc_parameters['wl_ia_z0']['scale']
-                Omm = cosmo.get_Omegam()
-                Dz = ccl.background.growth_factor(cosmo.cosmo_ccl, 1./(1.+z))
-                bz = A*((1.+z)/(1.+z0))**eta*0.0139*Omm/Dz #TODO: ask David about Eq 10 in 1810.02322
+                bz = A*((1.+z)/(1.+z0))**eta*0.0139/0.013872474  # pyccl2 -> has already the factor inside. Only needed bz
                 fz = np.ones(z.shape)
                 # Get tracer
                 tr['tracer'] = ccl.WeakLensingTracer(cosmo.cosmo_ccl,dndz=(z_dz,pz),ia_bias=(z,bz)) #,red_frac=(z,fz))
