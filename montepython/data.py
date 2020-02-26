@@ -313,7 +313,7 @@ class Data(object):
                 self.version = pyccl.__version__
             except:
                 self.version = ''
-            print 'with CCL %s' % self.version
+            print('with CCL %s' % self.version)
             warnings.warn(
                 "Running CCL from a non version-controlled repository")
             self.git_version, self.git_branch = '', ''
