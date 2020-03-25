@@ -35,6 +35,17 @@ class cl_cross_corr(Likelihood):
                             return fname
             raise IOError('File does not exists')
 
+        def get_bandpower_lims(eff_ell):
+            bpw = np.zeros((eff_ell.size, 2))
+
+            bpw[0] = np.array([0, 2 * eff_ell[0]])
+            for i in range(1, eff_ell.size):
+                l0 = bpw[i-1, 1] + 1
+                l1 = 2 * eff_ell[i] - l0
+                bpw[i] = np.array([l0, l1])
+
+            return bpw
+
 
         # Read arguments
         with open(os.path.abspath(data.cosmo_arguments['params_dir'])) as f:
@@ -55,7 +66,8 @@ class cl_cross_corr(Likelihood):
             fname = find_file_cls(self.cov_cls,dv['tracers'])
             ells = np.load(fname)['ells']
             cls = np.load(fname)['cls']
-            dv['mask'] = (ells>=dv['ell_cuts'][0]) & (ells<=dv['ell_cuts'][1])
+            bpw = get_bandpower_lims(ells)
+            dv['mask'] =  (bpw[:, 0]>=dv['ell_cuts'][0]) & (bpw[:, 1]<=dv['ell_cuts'][1])
             dv['ells'] = ells[dv['mask']]
             self.data = np.append(self.data,cls[dv['mask']])
             used_tracers = np.append(used_tracers,dv['tracers'])
