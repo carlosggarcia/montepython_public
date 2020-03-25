@@ -6,11 +6,11 @@ data.over_sampling=[1, 4]
 #------ Growth parametrization -----------
 # Linear -> Taylor expansion: each coeff is divided by 1/n!
 data.cosmo_arguments['growth_param'] = 'linear'
-data.parameters['dpk0'] = [ 0., None,    None,   0.1,  1.,  'cosmo']
+data.parameters['dpk0'] = [ 0., None,    None,   0,  1.,  'cosmo']
 data.parameters['dpk1'] = [ 0., None,    None,   0.1,  1.,  'cosmo']
-data.parameters['dpk2'] = [ 0., None,    None,   0.1,  1.,  'cosmo']
-data.parameters['dpk3'] = [ 0., None,    None,   0.1,  1.,  'cosmo']
-data.parameters['dpk4'] = [ 0., None,    None,   0.1,  1.,  'cosmo']
+# data.parameters['dpk2'] = [ 0., None,    None,   0.1,  1.,  'cosmo']
+# data.parameters['dpk3'] = [ 0., None,    None,   0.1,  1.,  'cosmo']
+# data.parameters['dpk4'] = [ 0., None,    None,   0.1,  1.,  'cosmo']
 
 
 
@@ -40,6 +40,7 @@ data.parameters['w_a']      = [ 0.000000,    None,    None,     0.0,  1.,  'cosm
 #------ Cosmo Arguments ------
 
 data.cosmo_arguments['params_dir']  = 'cl_cross_corr_params/cl_cross_corr.yml'
+data.cosmo_arguments['fiducial_cov']  = 'new_fiducial_cov'
 
 
 #------ Nuisance Parameters ------

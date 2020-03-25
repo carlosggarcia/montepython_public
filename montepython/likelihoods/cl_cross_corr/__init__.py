@@ -30,7 +30,7 @@ class cl_cross_corr(Likelihood):
             for p_ref in itertools.permutations([tracers1,tracers2]):
                 for p1 in itertools.permutations(p_ref[0]):
                     for p2 in itertools.permutations(p_ref[1]):
-                        fname = '{}/cov_{}_{}_{}_{}.npz'.format(path,p1[0],p1[1],p2[0],p2[1])
+                        fname = '{}/{}/cov_{}_{}_{}_{}.npz'.format(path,data.cosmo_arguments['fiducial_cov'],p1[0],p1[1],p2[0],p2[1])
                         if os.path.isfile(fname):
                             return fname
             raise IOError('File does not exists')
@@ -58,10 +58,6 @@ class cl_cross_corr(Likelihood):
         used_tracers = np.array([])
         for ndv in range(self.n_data_vectors):
             dv = self.params['data_vectors'][ndv]
-            # Find ell-cuts
-            ell_cuts_1 = next(x['ell_cuts'] for x in self.params['maps'] if x['name']==dv['tracers'][0])
-            ell_cuts_2 = next(x['ell_cuts'] for x in self.params['maps'] if x['name']==dv['tracers'][1])
-            dv['ell_cuts'] = [max(ell_cuts_1[0],ell_cuts_2[0]),min(ell_cuts_1[1],ell_cuts_2[1])]
             # Get ells and cls
             fname = find_file_cls(self.cov_cls,dv['tracers'])
             ells = np.load(fname)['ells']

@@ -31,6 +31,7 @@ data.parameters['w_a']      = [ 0.000000,    None,    None,     0.0,  1.,  'cosm
 #------ Cosmo Arguments ------
 
 data.cosmo_arguments['params_dir']  = 'cl_cross_corr_params/cl_cross_corr.yml'
+data.cosmo_arguments['fiducial_cov']  = 'new_fiducial_cov'
 
 
 #------ Nuisance Parameters ------
