@@ -17,6 +17,7 @@ class cl_cross_corr(Likelihood):
 
         Likelihood.__init__(self, path, data, command_line)
 
+        self.outdir = command_line.folder
 
         def find_file_cls(path, tracers):
             for p in itertools.permutations(tracers):
@@ -56,8 +57,8 @@ class cl_cross_corr(Likelihood):
         # Load Cl's
         self.data = np.array([])
         used_tracers = np.array([])
-        tracers_tosave = []
-        ells_tosave = np.array([])
+        self.tracers_tosave = []
+        self.ells_tosave = np.array([])
         for ndv in range(self.n_data_vectors):
             dv = self.params['data_vectors'][ndv]
             # Get ells and cls
@@ -70,8 +71,8 @@ class cl_cross_corr(Likelihood):
             self.data = np.append(self.data,cls[dv['mask']])
             used_tracers = np.append(used_tracers,dv['tracers'])
 
-            ells_tosave = np.append(ells_tosave, dv['ells'])
-            tracers_tosave.append(dv['tracers'])
+            self.ells_tosave = np.append(self.ells_tosave, dv['ells'])
+            self.tracers_tosave.append(dv['tracers'])
 
         used_tracers = np.unique(used_tracers)
 
@@ -109,13 +110,13 @@ class cl_cross_corr(Likelihood):
         # Print vector size and dof
         npars = len(data.get_mcmc_parameters(['varying']))
         vecsize = self.cov.shape[0]
-        dof = vecsize - npars
+        self.dof = vecsize - npars
         print('    -> Varied parameters = {}'.format(npars))
         print('    -> cl_cross_corr data vector size = {}'.format(vecsize))
-        print('    -> cl_cross_corr dof = {}'.format(dof))
+        print('    -> cl_cross_corr dof = {}'.format(self.dof))
 
-        np.savez_compressed(os.path.join(command_line.folder, 'cl_cross_corr_data_info.npz'), cov=self.cov,
-                            ells=ells_tosave, cls=self.data, tracers=tracers_tosave, dof=dof)
+        np.savez_compressed(os.path.join(self.outdir, 'cl_cross_corr_data_info.npz'), cov=self.cov,
+                            ells=self.ells_tosave, cls=self.data, tracers=self.tracers_tosave, dof=self.dof)
         # end of initialization
 
 
@@ -212,5 +213,9 @@ class cl_cross_corr(Likelihood):
         chi2 = (self.data-theory).dot(self.icov).dot(self.data-theory)
 
         lkl = lp - 0.5 * chi2
+
+        # np.savez_compressed(os.path.join(self.outdir, 'cl_cross_corr_bestfit_info.npz'), chi2=2*lkl, chi2dof=2*lkl/self.dof,
+        #                     cls=theory, ells=self.ells_tosave, tracers=self.tracers_tosave)
+
 
         return lkl
