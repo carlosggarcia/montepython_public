@@ -56,6 +56,8 @@ class cl_cross_corr(Likelihood):
         # Load Cl's
         self.data = np.array([])
         used_tracers = np.array([])
+        tracers_tosave = []
+        ells_tosave = np.array([])
         for ndv in range(self.n_data_vectors):
             dv = self.params['data_vectors'][ndv]
             # Get ells and cls
@@ -67,7 +69,12 @@ class cl_cross_corr(Likelihood):
             dv['ells'] = ells[dv['mask']]
             self.data = np.append(self.data,cls[dv['mask']])
             used_tracers = np.append(used_tracers,dv['tracers'])
+
+            ells_tosave = np.append(ells_tosave, dv['ells'])
+            tracers_tosave.append(dv['tracers'])
+
         used_tracers = np.unique(used_tracers)
+
 
         # Remove unused tracers
         for ntr, tr in enumerate(self.params['maps']):
@@ -102,9 +109,13 @@ class cl_cross_corr(Likelihood):
         # Print vector size and dof
         npars = len(data.get_mcmc_parameters(['varying']))
         vecsize = self.cov.shape[0]
+        dof = vecsize - npars
         print('    -> Varied parameters = {}'.format(npars))
         print('    -> cl_cross_corr data vector size = {}'.format(vecsize))
-        print('    -> cl_cross_corr dof = {}'.format(vecsize - npars))
+        print('    -> cl_cross_corr dof = {}'.format(dof))
+
+        np.savez_compressed(os.path.join(command_line.folder, 'cl_cross_corr_data_info.npz'), cov=self.cov,
+                            ells=ells_tosave, cls=self.data, tracers=tracers_tosave, dof=dof)
         # end of initialization
 
 
