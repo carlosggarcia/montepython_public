@@ -99,6 +99,12 @@ class cl_cross_corr(Likelihood):
         # Invert covariance matrix
         self.icov = np.linalg.inv(self.cov)
 
+        # Print vector size and dof
+        npars = len(data.get_mcmc_parameters(['varying']))
+        vecsize = self.cov.shape[0]
+        print('    -> Varied parameters = {}'.format(npars))
+        print('    -> cl_cross_corr data vector size = {}'.format(vecsize))
+        print('    -> cl_cross_corr dof = {}'.format(vecsize - npars))
         # end of initialization
 
 
