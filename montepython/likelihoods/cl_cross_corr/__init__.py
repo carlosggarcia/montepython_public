@@ -6,6 +6,7 @@ from montepython.likelihood_class import Likelihood
 import montepython.io_mp as io_mp
 import warnings
 import pyccl as ccl
+import shutil  # To copy the yml file to the outdir
 
 
 
@@ -52,7 +53,8 @@ class cl_cross_corr(Likelihood):
         with open(os.path.abspath(data.cosmo_arguments['params_dir'])) as f:
             self.params = yaml.safe_load(f)
         self.n_data_vectors = len(self.params['data_vectors'])
-
+        shutil.copy2(os.path.abspath(data.cosmo_arguments['params_dir']),
+                     self.outdir)
 
         # Load Cl's
         self.data = np.array([])
