@@ -40,7 +40,8 @@ class CCL():
             A_s      = self.pars['A_s'],
             n_s      = self.pars['n_s'],
             w0       = self.pars['w_0'],
-            wa       = self.pars['w_a']
+            wa       = self.pars['w_a'],
+            transfer_function = 'boltzmann_class'
         )
         return cosmo_ccl
 
@@ -75,7 +76,14 @@ class CCL():
 
     def compute(self, level=[]):
         self.cosmo_ccl = self.get_cosmo_ccl()
-        self.cosmo_ccl.compute_power()
+        #### Modified growth part
+        if 'growth_param' in self.pars:
+            pk = ccl.boltzmann.get_class_pk_lin(self.cosmo_ccl)
+            pknew = ccl.Pk2D(pkfunc=self.pk2D_new(pk), cosmo=self.cosmo_ccl, is_logp=False)
+            ccl.ccllib.cosmology_compute_linear_power(self.cosmo_ccl.cosmo, pknew.psp, 0)
+
+        #self.cosmo_ccl.compute_nonlin_power()
+        ccl.sigma8(self.cosmo_ccl)  # David's suggestion
         return
 
     def get_current_derived_parameters(self, names):
@@ -93,3 +101,23 @@ class CCL():
             derived[name] = value
 
         return derived
+
+    def dpk(self, a):
+     result = 0
+     if self.pars['growth_param'] == 'linear':
+         i = 0
+         while True:
+             pname = 'dpk' + str(i)
+             if pname not in self.pars:
+                 break
+             dpki = self.pars[pname]
+             result += dpki / np.math.factorial(i) * (1-a)**i
+             i += 1
+
+     return result
+
+    def pk2D_new(self, pk):
+        def pknew(k, a):
+            return (1 + self.dpk(a)) ** 2 * pk.eval(k, a, self.cosmo_ccl)
+        return pknew
+

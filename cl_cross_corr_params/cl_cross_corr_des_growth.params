@@ -3,6 +3,15 @@
 data.experiments=['cl_cross_corr']
 data.over_sampling=[1, 4]
 
+#------ Growth parametrization -----------
+# Linear -> Taylor expansion: each coeff is divided by 1/n!
+data.cosmo_arguments['growth_param'] = 'linear'
+data.parameters['dpk0'] = [ 0., None,    None,   0,  1.,  'cosmo']
+data.parameters['dpk1'] = [ 0., None,    None,   0.1,  1.,  'cosmo']
+# data.parameters['dpk2'] = [ 0., None,    None,   0.1,  1.,  'cosmo']
+# data.parameters['dpk3'] = [ 0., None,    None,   0.1,  1.,  'cosmo']
+# data.parameters['dpk4'] = [ 0., None,    None,   0.1,  1.,  'cosmo']
+
 
 
 #------ Cosmo Parameters ------
@@ -83,4 +92,3 @@ data.parameters['S_8']      = [  1.,  None,  None,  0.,  1.,  'derived']
 
 data.N=10
 data.write_step=5
-                                                                                                                                                                                                                       205,1         Bot

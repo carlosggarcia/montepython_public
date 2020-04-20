@@ -8,8 +8,6 @@ maps:
       bin: 0
       # dndz file
       dndz_file: 'des_clustering/dndz_bin0.txt'
-      # ell_cuts
-      ell_cuts: [0, 105]
 
     - name: 'DESgc1'
       # 'gc' for galaxies, 'wl' for weak lensing, 'cv' for convergence
@@ -18,8 +16,6 @@ maps:
       bin: 1
       # dndz file
       dndz_file: 'des_clustering/dndz_bin1.txt'
-      # ell_cuts
-      ell_cuts: [0, 155]
 
     - name: 'DESgc2'
       # 'gc' for galaxies, 'wl' for weak lensing, 'cv' for convergence
@@ -28,8 +24,6 @@ maps:
       bin: 2
       # dndz file
       dndz_file: 'des_clustering/dndz_bin2.txt'
-      # ell_cuts
-      ell_cuts: [0, 214]
 
     - name: 'DESgc3'
       # 'gc' for galaxies, 'wl' for weak lensing, 'cv' for convergence
@@ -38,8 +32,6 @@ maps:
       bin: 3
       # dndz file
       dndz_file: 'des_clustering/dndz_bin3.txt'
-      # ell_cuts
-      ell_cuts: [0, 255]
 
     - name: 'DESgc4'
       # 'gc' for galaxies, 'wl' for weak lensing, 'cv' for convergence
@@ -48,8 +40,6 @@ maps:
       bin: 4
       # dndz file
       dndz_file: 'des_clustering/dndz_bin4.txt'
-      # ell_cuts
-      ell_cuts: [0, 304]
 
     - name: 'DESwl0'
       # 'gc' for galaxies, 'wl' for weak lensing, 'cv' for convergence
@@ -58,8 +48,6 @@ maps:
       bin: 0
       # dndz file
       dndz_file: 'des_shear/dndz_metacal_bin0.txt'
-      # ell_cuts
-      ell_cuts: [0, 200]
 
     - name: 'DESwl1'
       # 'gc' for galaxies, 'wl' for weak lensing, 'cv' for convergence
@@ -68,8 +56,6 @@ maps:
       bin: 1
       # dndz file
       dndz_file: 'des_shear/dndz_metacal_bin1.txt'
-      # ell_cuts
-      ell_cuts: [0, 200]
 
     - name: 'DESwl2'
       # 'gc' for galaxies, 'wl' for weak lensing, 'cv' for convergence
@@ -78,8 +64,6 @@ maps:
       bin: 2
       # dndz file
       dndz_file: 'des_shear/dndz_metacal_bin2.txt'
-      # ell_cuts
-      ell_cuts: [0, 200]
 
     - name: 'DESwl3'
       # 'gc' for galaxies, 'wl' for weak lensing, 'cv' for convergence
@@ -88,14 +72,10 @@ maps:
       bin: 3
       # dndz file
       dndz_file: 'des_shear/dndz_metacal_bin3.txt'
-      # ell_cuts
-      ell_cuts: [0, 200]
 
     - name: 'PLAcv'
       # 'gc' for galaxies, 'wl' for weak lensing, 'cv' for convergence
       type: 'cv'
-      # ell_cuts
-      ell_cuts: [0, 2000]
 
 
 
@@ -104,58 +84,103 @@ data_vectors:
 
     # gc -gc
     - tracers: ['DESgc0', 'DESgc0']
+      ell_cuts: [0, 145]
     - tracers: ['DESgc1', 'DESgc1']
+      ell_cuts: [0, 225]
     - tracers: ['DESgc2', 'DESgc2']
+      ell_cuts: [0, 298]
     - tracers: ['DESgc3', 'DESgc3']
+      ell_cuts: [0, 371]
     - tracers: ['DESgc4', 'DESgc4']
+      ell_cuts: [0, 435]
 
     # gc -wl
     - tracers: ['DESgc0', 'DESwl0']
+      ell_cuts: [0, 145]
     - tracers: ['DESgc0', 'DESwl1']
+      ell_cuts: [0, 145]
     - tracers: ['DESgc0', 'DESwl2']
+      ell_cuts: [0, 145]
     - tracers: ['DESgc0', 'DESwl3']
+      ell_cuts: [0, 145]
     - tracers: ['DESgc1', 'DESwl0']
+      ell_cuts: [0, 225]
     - tracers: ['DESgc1', 'DESwl1']
+      ell_cuts: [0, 225]
     - tracers: ['DESgc1', 'DESwl2']
+      ell_cuts: [0, 225]
     - tracers: ['DESgc1', 'DESwl3']
+      ell_cuts: [0, 225]
     - tracers: ['DESgc2', 'DESwl0']
+      ell_cuts: [0, 298]
     - tracers: ['DESgc2', 'DESwl1']
+      ell_cuts: [0, 298]
     - tracers: ['DESgc2', 'DESwl2']
+      ell_cuts: [0, 298]
     - tracers: ['DESgc2', 'DESwl3']
+      ell_cuts: [0, 298]
     - tracers: ['DESgc3', 'DESwl0']
+      ell_cuts: [0, 371]
     - tracers: ['DESgc3', 'DESwl1']
+      ell_cuts: [0, 371]
     - tracers: ['DESgc3', 'DESwl2']
+      ell_cuts: [0, 371]
     - tracers: ['DESgc3', 'DESwl3']
+      ell_cuts: [0, 371]
     - tracers: ['DESgc4', 'DESwl0']
+      ell_cuts: [0, 435]
     - tracers: ['DESgc4', 'DESwl1']
+      ell_cuts: [0, 435]
     - tracers: ['DESgc4', 'DESwl2']
+      ell_cuts: [0, 435]
     - tracers: ['DESgc4', 'DESwl3']
+      ell_cuts: [0, 435]
 
     # gc -cv
     - tracers: ['DESgc0', 'PLAcv']
+      ell_cuts: [8, 145]
     - tracers: ['DESgc1', 'PLAcv']
+      ell_cuts: [8, 225]
     - tracers: ['DESgc2', 'PLAcv']
+      ell_cuts: [8, 298]
     - tracers: ['DESgc3', 'PLAcv']
+      ell_cuts: [8, 371]
     - tracers: ['DESgc4', 'PLAcv']
+      ell_cuts: [8, 435]
 
     # wl -wl
     - tracers: ['DESwl0', 'DESwl0']
+      ell_cuts: [0, 101]
     - tracers: ['DESwl0', 'DESwl1']
+      ell_cuts: [0, 115]
     - tracers: ['DESwl0', 'DESwl2']
+      ell_cuts: [0, 129]
     - tracers: ['DESwl0', 'DESwl3']
+      ell_cuts: [0, 137]
     - tracers: ['DESwl1', 'DESwl1']
+      ell_cuts: [0, 135]
     - tracers: ['DESwl1', 'DESwl2']
+      ell_cuts: [0, 156]
     - tracers: ['DESwl1', 'DESwl3']
+      ell_cuts: [0, 167]
     - tracers: ['DESwl2', 'DESwl2']
+      ell_cuts: [0, 188]
     - tracers: ['DESwl2', 'DESwl3']
+      ell_cuts: [0, 207]
     - tracers: ['DESwl3', 'DESwl3']
+      ell_cuts: [0, 235]
 
     # wl -cv
     - tracers: ['DESwl0', 'PLAcv']
+      ell_cuts: [8, 172]
     - tracers: ['DESwl1', 'PLAcv']
+      ell_cuts: [8, 210]
     - tracers: ['DESwl2', 'PLAcv']
+      ell_cuts: [8, 263]
     - tracers: ['DESwl3', 'PLAcv']
+      ell_cuts: [8, 325]
 
     # cv -cv
     # WARNING: DONT USE IT AT THIS MOMENT! NO NUISANCE PARAMS IMPLEMENTED
     # - tracers: ['PLAcv', 'PLAcv']
+    #   ell_cuts: [8, 2000]
