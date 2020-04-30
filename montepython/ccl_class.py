@@ -44,6 +44,9 @@ class CCL():
         S8 = self.get_sigma8()*(self.get_Omegam()/0.3)**(0.5)
         return S8
 
+    def get_growth_factor(self, a):
+        return ccl.background.growth_factor(self.cosmo_ccl, a)
+
     def struct_cleanup(self):
         return
 

@@ -1,0 +1,29 @@
+# Tracers
+maps:
+
+    - name: 'Lofar'
+      # 'g' for galaxies, 'k' for convergence
+      type: 'g'
+      # ell_cuts
+      ell_cuts: [0, 500]
+
+    - name: 'Planck'
+      # 'g' for galaxies, 'k' for convergence
+      type: 'k'
+      # ell_cuts
+      ell_cuts: [0, 2000]
+
+
+
+# List all the different combinations of power spectra you want to analyze
+data_vectors:
+
+    # g - g
+    - tracers: ['Lofar', 'Lofar']
+
+    # g - k
+    - tracers: ['Lofar', 'Planck']
+
+    # k - k
+    # WARNING: DONT USE IT AT THIS MOMENT! NO NUISANCE PARAMS IMPLEMENTED
+    # - tracers: ['Planck', 'Planck']

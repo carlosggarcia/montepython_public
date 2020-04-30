@@ -1,0 +1,7 @@
+# LotssCross data
+
+LotssCross.def_cls_cov_nz = 'data/lotsscross_cls.npz'
+
+LotssCross.def_maps = {'maps': [{'name': 'Lofar', 'type': 'g', 'ell_cuts': [0, 500]}, {'name': 'Planck', 'type': 'k', 'ell_cuts': [0, 2000]}], 'data_vectors': [{'tracers': ['Lofar', 'Lofar']}, {'tracers': ['Lofar', 'Planck']}]}
+
+LotssCross.use_nuisance = ['bias_g']
