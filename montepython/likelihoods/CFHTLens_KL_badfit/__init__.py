@@ -141,7 +141,7 @@ class CFHTLens_KL_badfit(Likelihood):
 
         # Calculate Gaussian prior for Intrinsic Alignement
         if cosmo.pars['A_IA'] !=0:
-            lp = (cosmo.pars['beta_IA']-cosmo.pars['beta_IA_prior'][0])**2./2./cosmo.pars['beta_IA_prior'][1]**2.
+            lp = -(cosmo.pars['beta_IA']-cosmo.pars['beta_IA_prior'][0])**2./2./cosmo.pars['beta_IA_prior'][1]**2.
         else:
             lp = 0.
 
