@@ -146,7 +146,8 @@ class Likelihood(object):
             data_file = open(path, 'r')
             for line in data_file:
                 if line.find('#') == -1:
-                    if line.find(self.name+'.') != -1:
+                    # if line.find(self.name+'.') != -1:
+                    if line.find(self.name+'.') == 0:
                         # Recover the name and value from the .data file
                         regexp = re.match(
                             "%s.(.*)\s*=\s*(.*)" % self.name, line)

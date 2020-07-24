@@ -21,6 +21,8 @@ if __name__ == '__main__':
     # MPI is tested for, and if a different than one number of cores is found,
     # it runs mpi_run instead of a simple run.
     MPI_ASKED = False
+
+
     try:
         from mpi4py import MPI
         NPROCS = MPI.COMM_WORLD.Get_size()
@@ -32,9 +34,12 @@ if __name__ == '__main__':
     except ImportError:
         pass
 
+
     if MPI_ASKED:
         # This import has to be there in case MPI is not installed
         from run import mpi_run
         sys.exit(mpi_run())
     else:
         sys.exit(run())
+
+

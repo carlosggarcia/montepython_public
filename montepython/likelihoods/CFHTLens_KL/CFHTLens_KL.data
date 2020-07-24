@@ -1,0 +1,8 @@
+# CFHTLens_KL data
+CFHTLens_KL.data_directory      = data.path['data']+'/CFHTLens_KL'
+CFHTLens_KL.file                = 'data_fourier.fits'
+CFHTLens_KL.mcm                 = 'mcm_'
+
+CFHTLens_KL.mask_ell            = [False,  True,  True,  True,  True,  True, False]
+
+CFHTLens_KL.bandpowers = [[  30,   80], [  80,  260], [ 260,  450], [ 450,  670], [ 670, 1310], [1310, 2300], [2300, 5100]]

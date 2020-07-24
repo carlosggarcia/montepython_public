@@ -748,12 +748,12 @@ def compute_lkl(cosmo, data):
                 cosmo.compute(["lensing"])
             except CosmoComputationError as failure_message:
                 # could be useful to uncomment for debugging:
-                #np.set_printoptions(precision=30, linewidth=150)
+                np.set_printoptions(precision=30, linewidth=150)
                 #print('cosmo params')
-                #print(data.cosmo_arguments)
+                print(data.cosmo_arguments)
                 #print(data.cosmo_arguments['tau_reio'])
-                sys.stderr.write(str(failure_message)+'\n')
-                sys.stderr.flush()
+                # sys.stderr.write(str(failure_message)+'\n')
+                # sys.stderr.flush()
                 return data.boundary_loglike
             except CosmoSevereError as critical_message:
                 raise io_mp.CosmologicalModuleError(

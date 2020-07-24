@@ -12,7 +12,8 @@ WiggleZ.use_scaling = True
 
 # decide which bandpowers to use, min to max
 WiggleZ.min_mpk_points_use = 3
-WiggleZ.max_mpk_points_use = 30
+# EB: modified 30->20
+WiggleZ.max_mpk_points_use = 20
 WiggleZ.min_mpk_kbands_use = 1
 WiggleZ.max_mpk_kbands_use = 100
 
