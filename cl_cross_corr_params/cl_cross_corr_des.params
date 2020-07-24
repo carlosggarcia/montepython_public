@@ -22,7 +22,8 @@ data.parameters['n_s']      = [ 0.965000, 0.87,    1.07,   0.004,  1.,  'cosmo']
 # Using aprox results in Fig. 7 DES18 paper + bounds in Table I
 data.parameters['h']        = [ 0.74, 0.55,    0.91,   0.09,  1.,  'cosmo']
 
-data.parameters['tau_reio'] = [ 0.08, None,    None,   0.,  1.,  'cosmo']
+# Not read by CCL
+# data.parameters['tau_reio'] = [ 0.08, None,    None,   0.,  1.,  'cosmo']
 
 data.parameters['w_0']      = [-1.000000,    None,    None,     0.0,  1.,  'cosmo']
 data.parameters['w_a']      = [ 0.000000,    None,    None,     0.0,  1.,  'cosmo']

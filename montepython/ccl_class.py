@@ -61,6 +61,20 @@ class CCL():
             self.pars.update(dict(pars_in[0]))
         elif len(pars_in) != 0:
             raise RuntimeError("bad call")
+        ### Check for parmeters of cl_cross_corr lkl
+        if 'params_dir' in self.pars.keys():
+            del[self.pars['params_dir']]
+        if 'fiducial_cov' in self.pars.keys():
+            del[self.pars['fiducial_cov']]
+        #
+        if 'tau_reio' in self.pars.keys():
+            raise ValueError('CCL does not read tau_reio. Remove it.')
+        # Translate w_0, w_a CLASS vars to CCL w0, wa
+        if 'w_0' in self.pars.keys():
+            self.pars['w0'] = self.pars.pop('w_0')
+        if 'w_a' in self.pars.keys():
+            self.pars['wa'] = self.pars.pop('w_a')
+
         self.pars.update(kars)
         return True
 
