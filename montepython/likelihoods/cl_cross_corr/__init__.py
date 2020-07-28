@@ -216,7 +216,7 @@ class cl_cross_corr(Likelihood):
 
         lkl = lp - 0.5 * chi2
 
-        # np.savez_compressed(os.path.join(self.outdir, 'cl_cross_corr_bestfit_info.npz'), chi2=2*lkl, chi2dof=2*lkl/self.dof,
+        # np.savez_compressed(os.path.join(self.outdir, 'cl_cross_corr_bestfit_info.npz'), chi2_nolp=chi2, lp_chi2=2*lp, chi2=2*lkl, chi2dof=2*lkl/self.dof,
         #                     cls=theory, ells=self.ells_tosave, tracers=self.tracers_tosave)
 
 

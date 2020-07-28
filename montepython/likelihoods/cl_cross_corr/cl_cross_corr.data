@@ -1,6 +1,6 @@
 # cl_cross_corr data
 
-cl_cross_corr.cov_cls         = '/mnt/extraspace/gravityls_3/S8z/Cls/all_together'
+cl_cross_corr.cov_cls         = '/mnt/extraspace/gravityls_3/S8z/Cls/all_together_metacal_new_niter0_true'
 cl_cross_corr.dndz            = '/mnt/extraspace/damonge/S8z_data/derived_products'
 
 cl_cross_corr.use_nuisance = ['gc_b_0', 'gc_b_1', 'gc_b_2', 'gc_b_3', 'gc_b_4', 'gc_dz_0', 'gc_dz_1', 'gc_dz_2', 'gc_dz_3', 'gc_dz_4', 'wl_m_0', 'wl_m_1', 'wl_m_2', 'wl_m_3', 'wl_ia_A', 'wl_ia_eta', 'wl_ia_z0', 'wl_dz_0', 'wl_dz_1', 'wl_dz_2', 'wl_dz_3']
