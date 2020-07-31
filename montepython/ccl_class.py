@@ -55,7 +55,7 @@ class CCL():
 
     # Set up the dictionary
     def set(self, *pars_in, **kars):
-        if 'A_s' in pars_in[0].keys():
+        if ('A_s' in pars_in[0].keys()) and ('sigma8' in self.pars.keys()):
             self.pars.pop('sigma8')
         if len(pars_in) == 1:
             self.pars.update(dict(pars_in[0]))
