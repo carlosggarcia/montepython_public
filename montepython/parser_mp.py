@@ -590,8 +590,8 @@ def create_parser():
              c) error_params.log: cosmo.pars dictionary
             <++>
         <**>--Rec-folder<**> : str
-            <++>Recompute chains in this folder or this set of chains.<++>
-            Use together with "-m Rec" <++>(*OPT*)<++>
+            <++>Recompute chains in this folder or this set of chains.
+            Use together with "-m Rec"<++> (*OPT*)<++>
 
         For MultiNest, PolyChord and Cosmo Hammer arguments, see
         :mod:`MultiNest`, :mod:`PolyChord` and :mod:`cosmo_hammer`.
