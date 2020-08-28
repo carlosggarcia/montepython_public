@@ -1108,6 +1108,13 @@ def parse(custom_command=''):
                     "You must provide an output folder, because you do not " +
                     "want your main folder to look dirty, do you ?")
 
+            if args.method == 'Rec':
+                from shutil import copy
+                if os.path.isdir(args.Rec_folder[0]):
+                    folder = args.Rec_folder[0]
+                else:
+                    folder = os.path.sep.join(args.Rec_folder[0].split(os.path.sep)[:-1])
+                copy(os.path.join(folder, 'log.param'), args.folder)
             # and if the folder already exists, and that no parameter file was
             # provided, use the log.param
             if os.path.isdir(args.folder):
