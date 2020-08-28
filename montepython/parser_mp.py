@@ -589,6 +589,9 @@ def create_parser():
              b) error_msg.log: cosmo.pars dictionary + error message
              c) error_params.log: cosmo.pars dictionary
             <++>
+        <**>--Rec-folder<**> : str
+            <++>Recompute chains in this folder or this set of chains.<++>
+            Use together with "-m Rec" <++>(*OPT*)<++>
 
         For MultiNest, PolyChord and Cosmo Hammer arguments, see
         :mod:`MultiNest`, :mod:`PolyChord` and :mod:`cosmo_hammer`.
@@ -758,7 +761,7 @@ def create_parser():
     # -- sampling method (OPTIONAL)
     runparser.add_argument('-m', '--method', help=helpdict['m'],
                            dest='method', default='MH',
-                           choices=['MH', 'NS', 'PC', 'CH', 'IS', 'Der', 'Fisher'])
+                           choices=['MH', 'NS', 'PC', 'CH', 'IS', 'Der', 'Fisher', 'Rec'])
     # -- update Metropolis Hastings (OPTIONAL)
     runparser.add_argument('--update', help=helpdict['update'], type=int,
                            dest='update', default=50)
@@ -853,6 +856,12 @@ def create_parser():
     runparser.add_argument(
         '--IS-starting-folder', dest='IS_starting_folder',
         help=helpdict['IS-starting-folder'], type=str, default='', nargs='+')
+
+    ###############
+    # Recompute arguments
+    runparser.add_argument(
+        '--Rec-folder', dest='Rec_folder',
+        help=helpdict['Rec-folder'], type=str, default='', nargs='+')
 
     ###############
     # We need the following so the run does not crash if one of the external
