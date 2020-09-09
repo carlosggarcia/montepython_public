@@ -4,6 +4,9 @@
 sacc_covG: 'cls_signal_covG_ns4096.fits'
 sacc_covNG: 'cls_noise_covNG_ns4096.fits'
 
+# Compute the Cls at all ells or interpolate
+interpolate_cls: True
+
 # Tracers
 tracers:
   # - name: tracer's name in sacc file
