@@ -130,11 +130,6 @@ class cl_cross_corr_v2(Likelihood):
         cls[msk] = cli(np.log(ls[msk]))
         return cls
 
-    def compute_binned_cl(self, cosmo, ccl_tracers, tr1, tr2):
-
-        return cl_binned
-
-
     # compute likelihood
 
     def loglkl(self, cosmo, data):
