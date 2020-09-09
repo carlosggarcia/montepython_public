@@ -159,6 +159,7 @@ class cl_cross_corr_v2(Likelihood):
                 lp = lp + self.get_loggaussprior(dz, *trvals['dz'])
                 # Compute z - dz nd remove points with z_dz < 0:
                 z_dz = z[z >= dz] - dz
+                pz = pz[z >= dz]
 
             if trvals['type'] == 'gc':
                 # Calculate bias
