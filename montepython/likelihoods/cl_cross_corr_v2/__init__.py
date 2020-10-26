@@ -50,9 +50,11 @@ class cl_cross_corr_v2(Likelihood):
         # used_tracers = self.params['tracers'].keys()
 
         # Remove unused Cls
+        self.scovG.remove_selection(data_type='cl_0b')
         self.scovG.remove_selection(data_type='cl_eb')
         self.scovG.remove_selection(data_type='cl_be')
         self.scovG.remove_selection(data_type='cl_bb')
+        scovNG.remove_selection(data_type='cl_0b')
         scovNG.remove_selection(data_type='cl_eb')
         scovNG.remove_selection(data_type='cl_be')
         scovNG.remove_selection(data_type='cl_bb')
@@ -88,13 +90,22 @@ class cl_cross_corr_v2(Likelihood):
         # Save the ells considered for each Cl
         ells = np.array([])
         for tr0, tr1 in self.scovG.get_tracer_combinations():
-            ells = np.concatenate((ells, self.scovG.get_ell_cl('cl_ee', tr0, tr1)[0]))
+            dtype = self.get_dtype_for_trs(tr0, tr1)
+            ells = np.concatenate((ells, self.scovG.get_ell_cl(dtype, tr0, tr1)[0]))
 
         # Save the data vector
         self.data = self.scovG.mean
 
         # Compute the full covmat
-        self.cov = self.scovG.covariance.covmat + scovNG.covariance.covmat
+        # TODO: Remove after debugging
+        cov = self.scovG.covariance.covmat
+        # for trs1 in self.scovG.get_tracer_combinations():
+        #     ix1 = self.scovG.indices(tracers=trs1)
+        #     for trs2 in self.scovG.get_tracer_combinations():
+        #         ix2 = self.scovG.indices(tracers=trs2)
+        #         cov[ix1[0], ix2[0]] *= 10
+
+        self.cov = cov + scovNG.covariance.covmat
 
         # Invert covariance matrix
         self.icov = np.linalg.inv(self.cov)
@@ -130,10 +141,21 @@ class cl_cross_corr_v2(Likelihood):
         cls[msk] = cli(np.log(ls[msk]))
         return cls
 
-    def compute_binned_cl(self, cosmo, ccl_tracers, tr1, tr2):
+    def get_dtype_suffix_for_tr(self, tr):
+        if ('gc' in tr) or ('cv' in tr):
+            return '0'
+        elif 'wl' in tr:
+            return 'e'
+        else:
+            raise ValueError('dtype not found for tracer {}'.format(tr))
 
-        return cl_binned
 
+    def get_dtype_for_trs(self, tr0, tr1):
+        dtype = 'cl_'
+        dtype += self.get_dtype_suffix_for_tr(tr0)
+        dtype += self.get_dtype_suffix_for_tr(tr1)
+
+        return dtype
 
     # compute likelihood
 
@@ -190,7 +212,8 @@ class cl_cross_corr_v2(Likelihood):
         theory = np.zeros_like(self.data)
         for tr1, tr2 in self.scovG.get_tracer_combinations():
             # Get the indices for this part of the data vector
-            ind = self.scovG.indices(data_type='cl_ee', tracers=(tr1, tr2))
+            dtype = self.get_dtype_for_trs(tr1, tr2)
+            ind = self.scovG.indices(data_type=dtype, tracers=(tr1, tr2))  # not necessary because we have removed all b-correlations
             # Get the bandpower window function.
             # w.values contains the values of ell at which it is sampled
             w = self.scovG.get_bandpower_windows(ind)
