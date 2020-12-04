@@ -37,28 +37,21 @@ class cl_cross_corr_v2(Likelihood):
 
         # Load sacc files
         self.scovG = self.load_sacc_file(self.params['sacc_covG'])
-        if os.path.isfile(self.params['sacc_covNG']):
-            scovNG = self.load_sacc_file(self.params['sacc_covNG'])
-
-        # Save the ells considered for each Cl
-        ells = np.array([])
-        for tr0, tr1 in self.scovG.get_tracer_combinations():
-            dtype = self.get_dtype_for_trs(tr0, tr1)
-            ells = np.concatenate((ells, self.scovG.get_ell_cl(dtype, tr0, tr1)[0]))
 
         # Save the data vector
         self.data = self.scovG.mean
 
         # Compute the full covmat
         # TODO: Remove after debugging
-        cov = self.scovG.covariance.covmat
+        self.cov = self.scovG.covariance.covmat
         # for trs1 in self.scovG.get_tracer_combinations():
         #     ix1 = self.scovG.indices(tracers=trs1)
         #     for trs2 in self.scovG.get_tracer_combinations():
         #         ix2 = self.scovG.indices(tracers=trs2)
         #         cov[ix1[0], ix2[0]] *= 10
-
-        self.cov = cov + scovNG.covariance.covmat
+        if os.path.isfile(self.params['sacc_covNG']):
+            scovNG = self.load_sacc_file(self.params['sacc_covNG'])
+            self.cov +=  scovNG.covariance.covmat
 
         # Invert covariance matrix
         self.icov = np.linalg.inv(self.cov)
@@ -70,6 +63,12 @@ class cl_cross_corr_v2(Likelihood):
         print('    -> Varied parameters = {}'.format(npars))
         print('    -> cl_cross_corr data vector size = {}'.format(vecsize))
         print('    -> cl_cross_corr dof = {}'.format(self.dof))
+
+        # Save the ells considered for each Cl
+        ells = np.array([])
+        for tr0, tr1 in self.scovG.get_tracer_combinations():
+            dtype = self.get_dtype_for_trs(tr0, tr1)
+            ells = np.concatenate((ells, self.scovG.get_ell_cl(dtype, tr0, tr1)[0]))
 
         # Save a copy of the covmat, ells and cls for the tracer_combinations used for debugging
         np.savez_compressed(os.path.join(self.outdir, 'cl_cross_corr_data_info.npz'), cov=self.cov,
