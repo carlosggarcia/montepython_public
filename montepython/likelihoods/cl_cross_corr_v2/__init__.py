@@ -36,56 +36,9 @@ class cl_cross_corr_v2(Likelihood):
         ##########
 
         # Load sacc files
-        self.scovG = sacc.Sacc.load_fits(self.params['sacc_covG'])
+        self.scovG = self.load_sacc_file(self.params['sacc_covG'])
         if os.path.isfile(self.params['sacc_covNG']):
-            scovNG = sacc.Sacc.load_fits(self.params['sacc_covNG'])
-
-        # Check used tracers are in the sacc file
-        tracers_sacc = [trd for trd in self.scovG.tracers]
-        for tr in self.params['tracers'].keys():
-            if tr not in tracers_sacc:
-                raise ValueError('The tracer {} is not present in {}'.format(tr, self.params['sacc_covG']))
-
-        # TODO: Remove unused tracers
-        # used_tracers = self.params['tracers'].keys()
-
-        # Remove unused Cls
-        self.scovG.remove_selection(data_type='cl_0b')
-        self.scovG.remove_selection(data_type='cl_eb')
-        self.scovG.remove_selection(data_type='cl_be')
-        self.scovG.remove_selection(data_type='cl_bb')
-        scovNG.remove_selection(data_type='cl_0b')
-        scovNG.remove_selection(data_type='cl_eb')
-        scovNG.remove_selection(data_type='cl_be')
-        scovNG.remove_selection(data_type='cl_bb')
-
-        # Remove unused tracer combinations
-        used_tracer_combinations = []
-        for tracers_d in self.params['tracer_combinations']:
-            tr1, tr2 = tracers_d['tracers']
-            used_tracer_combinations.append((tr1, tr2))
-            # Take into account that both are the same when comparing!
-            used_tracer_combinations.append((tr2, tr1))
-
-        used_tracer_combinations_sacc = []
-        for tracers in self.scovG.get_tracer_combinations():
-            if tracers not in used_tracer_combinations:
-                self.scovG.remove_selection(tracers=tracers)
-                scovNG.remove_selection(tracers=tracers)
-            used_tracer_combinations_sacc.append(tracers)
-
-        # Cut scales below and above scale cuts for each tracer combination
-        for tracers_d in self.params['tracer_combinations']:
-                lmin, lmax = tracers_d['ell_cuts']
-                tracers = tuple(tracers_d['tracers'])
-                print(tracers, lmin, lmax)
-                if tracers not in used_tracer_combinations_sacc:
-                    # if not present is because they have the opposite ordering
-                    tracers = tracers[::-1]
-                self.scovG.remove_selection(ell__lt=lmin, tracers=tracers)
-                self.scovG.remove_selection(ell__gt=lmax, tracers=tracers)
-                scovNG.remove_selection(ell__lt=lmin, tracers=tracers)
-                scovNG.remove_selection(ell__gt=lmax, tracers=tracers)
+            scovNG = self.load_sacc_file(self.params['sacc_covNG'])
 
         # Save the ells considered for each Cl
         ells = np.array([])
@@ -123,6 +76,49 @@ class cl_cross_corr_v2(Likelihood):
                             ells=ells, cls=self.data, tracers=self.scovG.get_tracer_combinations(), dof=self.dof)
         # end of initialization
 
+    def load_sacc_file(self, sacc_file):
+        print(f'Loading {sacc_file}')
+        s = sacc.Sacc.load_fits(sacc_file)
+        # Check used tracers are in the sacc file
+        tracers_sacc = [trd for trd in s.tracers]
+        for tr in self.params['tracers'].keys():
+            if tr not in tracers_sacc:
+                raise ValueError('The tracer {} is not present in {}'.format(tr, sacc_file))
+        # TODO: Remove unused tracers
+        # used_tracers = self.params['tracers'].keys()
+        # Remove unused Cls
+        s.remove_selection(data_type='cl_0b')
+        s.remove_selection(data_type='cl_eb')
+        s.remove_selection(data_type='cl_be')
+        s.remove_selection(data_type='cl_bb')
+
+        # Remove unused tracer combinations
+        used_tracer_combinations = []
+        for tracers_d in self.params['tracer_combinations']:
+            tr1, tr2 = tracers_d['tracers']
+            used_tracer_combinations.append((tr1, tr2))
+            # Take into account that both are the same when comparing!
+            used_tracer_combinations.append((tr2, tr1))
+
+        used_tracer_combinations_sacc = []
+        for tracers in s.get_tracer_combinations():
+            if tracers not in used_tracer_combinations:
+                s.remove_selection(tracers=tracers)
+            used_tracer_combinations_sacc.append(tracers)
+
+        # Cut scales below and above scale cuts for each tracer combination
+        for tracers_d in self.params['tracer_combinations']:
+                lmin, lmax = tracers_d['ell_cuts']
+                tracers = tuple(tracers_d['tracers'])
+                print(tracers, lmin, lmax)
+                if tracers not in used_tracer_combinations_sacc:
+                    # if not present is because they have the opposite ordering
+                    tracers = tracers[::-1]
+                s.remove_selection(ell__lt=lmin, tracers=tracers)
+                s.remove_selection(ell__gt=lmax, tracers=tracers)
+        print()
+
+        return s
 
     def get_loggaussprior(self, value, center, var):
         lp = -0.5 * ((value - center) / var)**2.
@@ -144,7 +140,7 @@ class cl_cross_corr_v2(Likelihood):
     def get_dtype_suffix_for_tr(self, tr):
         if ('gc' in tr) or ('cv' in tr):
             return '0'
-        elif 'wl' in tr:
+        elif ('wl' in tr) or ('bin' in tr):
             return 'e'
         else:
             raise ValueError('dtype not found for tracer {}'.format(tr))
@@ -239,8 +235,10 @@ class cl_cross_corr_v2(Likelihood):
 
         lkl = lp - 0.5 * chi2
 
+        # print('chi2 =', chi2)
+        # print('lp =', 2* lp)
         # np.savez_compressed(os.path.join(self.outdir, 'cl_cross_corr_bestfit_info.npz'), chi2_nolp=chi2, lp_chi2=2*lp, chi2=2*lkl, chi2dof=2*lkl/self.dof,
-        #                     cls=theory, ells=self.ells_tosave, tracers=self.tracers_tosave)
+        #                     cls=theory)#, ells=self.ells_tosave, tracers=self.tracers_tosave)
 
 
         return lkl
