@@ -49,7 +49,7 @@ class cl_cross_corr_v2(Likelihood):
         #     for trs2 in self.scovG.get_tracer_combinations():
         #         ix2 = self.scovG.indices(tracers=trs2)
         #         cov[ix1[0], ix2[0]] *= 10
-        if os.path.isfile(self.params['sacc_covNG']):
+        if ('sacc_covNG' in self.params) and os.path.isfile(self.params['sacc_covNG']):
             scovNG = self.load_sacc_file(self.params['sacc_covNG'])
             self.cov +=  scovNG.covariance.covmat
 
