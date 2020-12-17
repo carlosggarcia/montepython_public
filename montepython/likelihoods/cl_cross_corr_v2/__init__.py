@@ -51,7 +51,7 @@ class cl_cross_corr_v2(Likelihood):
         #         cov[ix1[0], ix2[0]] *= 10
         if ('sacc_covNG' in self.params) and os.path.isfile(self.params['sacc_covNG']):
             scovNG = self.load_sacc_file(self.params['sacc_covNG'])
-            self.cov +=  scovNG.covariance.covmat
+            self.cov += scovNG.covariance.covmat
 
         # Invert covariance matrix
         self.icov = np.linalg.inv(self.cov)
@@ -147,8 +147,12 @@ class cl_cross_corr_v2(Likelihood):
 
     def get_dtype_for_trs(self, tr0, tr1):
         dtype = 'cl_'
-        dtype += self.get_dtype_suffix_for_tr(tr0)
-        dtype += self.get_dtype_suffix_for_tr(tr1)
+        if ('wl' in tr0) and ('cv' in tr1):
+            dtype += self.get_dtype_suffix_for_tr(tr1)
+            dtype += self.get_dtype_suffix_for_tr(tr0)
+        else:
+            dtype += self.get_dtype_suffix_for_tr(tr0)
+            dtype += self.get_dtype_suffix_for_tr(tr1)
 
         return dtype
 
@@ -165,8 +169,9 @@ class cl_cross_corr_v2(Likelihood):
         # Get Tracers
         for trname, trvals in self.params['tracers'].items():
             stracer = self.scovG.get_tracer(trname)
-            z = stracer.z
-            pz = stracer.nz
+            if 'cv' not in trname:
+                z = stracer.z
+                pz = stracer.nz
 
             if 'dz' in trvals:
                 # Calculate z bias
