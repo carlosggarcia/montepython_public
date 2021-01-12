@@ -1,0 +1,83 @@
+#------ Experiments ------
+
+data.experiments=['cl_cross_corr_v2']
+data.over_sampling=[1, 4]
+
+
+
+#------ Cosmo Parameters ------
+# BF DES18 paper 5x2pt 
+
+# Omega_b = Omega_m /5; Omega_c = Omega_m * 4 / 5 
+# Omega_m = 0.271 in DES18 paper Sec. F
+data.parameters['Omega_b']  = [ 0.054200, 0.03,    0.07,   0.028,  1.,  'cosmo']
+data.parameters['Omega_c']  = [ 0.216800, 0.07,    0.83,   0.0027,  1.,  'cosmo']
+
+# Using aprox results in Fig. 7 DES18 paper + bounds in Table I
+data.parameters['A_s']      = [ 2.8, 0.5,       5,     0.3,  1e-9,  'cosmo']
+# data.parameters['sigma_8']      = [ 0.821, None,       None,     0.3,  1,  'cosmo']
+# Planck 18 + DES18 priors in Table I
+data.parameters['n_s']      = [ 0.965000, 0.87,    1.07,   0.004,  1.,  'cosmo']
+
+# Using aprox results in Fig. 7 DES18 paper + bounds in Table I
+data.parameters['h']        = [ 0.74, 0.55,    0.91,   0.09,  1.,  'cosmo']
+
+# Not read by CCL
+# data.parameters['tau_reio'] = [ 0.08, None,    None,   0.,  1.,  'cosmo']
+
+data.parameters['w_0']      = [-1.000000,    None,    None,     0.0,  1.,  'cosmo']
+data.parameters['w_a']      = [ 0.000000,    None,    None,     0.0,  1.,  'cosmo']
+
+
+#------ Cosmo Arguments ------
+
+data.cosmo_arguments['params_dir']  = 'cl_cross_corr_params_v2/cl_cross_corr_v2_gcgc_gcwl_wlwl.yml'
+
+
+#------ Nuisance Parameters ------
+# Table II DES18 paper
+data.parameters['gc_b_0']         = [ 1.410000,    0.8,    3.,     0.13,  1.,  'nuisance']
+data.parameters['gc_b_1']         = [ 1.600000,    0.8,    3.,     0.12,  1.,  'nuisance']
+data.parameters['gc_b_2']         = [ 1.600000,    0.8,    3.,     0.11,  1.,  'nuisance']
+data.parameters['gc_b_3']         = [ 1.910000,    0.8,    3.,     0.14,  1.,  'nuisance']
+data.parameters['gc_b_4']         = [ 1.960000,    0.8,    3.,     0.14,  1.,  'nuisance']
+
+# Using parameters from priors in Table I DES18 paper
+data.parameters['gc_dz_0']         = [ 0.000000,    None,    None,     0.007,  1.,  'nuisance']
+data.parameters['gc_dz_1']         = [ 0.000000,    None,    None,     0.007,  1.,  'nuisance']
+data.parameters['gc_dz_2']         = [ 0.000000,    None,    None,     0.006,  1.,  'nuisance']
+data.parameters['gc_dz_3']         = [ 0.000000,    None,    None,     0.010,  1.,  'nuisance']
+data.parameters['gc_dz_4']         = [ 0.000000,    None,    None,     0.010,  1.,  'nuisance']
+
+# Using aprox results in Fig. 7 DES18 paper
+data.parameters['wl_ia_A']        = [ 0.5,    -5.0,    5.0,     0.25, 1., 'nuisance']
+data.parameters['wl_ia_eta']      = [ 0.0,    -5.0,    5.0,     3.2,  1.,  'nuisance']
+data.parameters['wl_ia_z0']       = [ 0.620000,    None,    None,     0.0,  1.,  'nuisance']
+
+# Table III DES18 paper
+data.parameters['wl_m_0']         = [ 0.03,    None,    None,     0.034 ,  1.,  'nuisance']
+data.parameters['wl_m_1']         = [ 0.07,    None,    None,     0.027 ,  1.,  'nuisance']
+data.parameters['wl_m_2']         = [ -0.01,    None,    None,     0.020 ,  1.,  'nuisance']
+data.parameters['wl_m_3']         = [ -0.08,    None,    None,     0.018 ,  1.,  'nuisance']
+
+# Using parameters from priors in Table I DES18 paper
+data.parameters['wl_dz_0']         = [ -0.001,    None,    None,  0.016,  1.,  'nuisance']
+data.parameters['wl_dz_1']         = [ -0.019,    None,    None,  0.013,  1.,  'nuisance']
+data.parameters['wl_dz_2']         = [ 0.009,    None,    None,  0.011,  1.,  'nuisance']
+data.parameters['wl_dz_3']         = [ -0.018,    None,    None,  0.022,  1.,  'nuisance']
+
+
+
+
+#------ Derived Parameters ------
+
+data.parameters['sigma_8']  = [  1.,  None,  None,  0.,  1.,  'derived']
+data.parameters['Omega_m']  = [  1.,  None,  None,  0.,  1.,  'derived']
+data.parameters['S_8']      = [  1.,  None,  None,  0.,  1.,  'derived']
+
+
+
+#------ Mcmc parameters ------
+
+data.N=10
+data.write_step=5
