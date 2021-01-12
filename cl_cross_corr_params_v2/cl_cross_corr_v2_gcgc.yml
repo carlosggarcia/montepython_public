@@ -1,0 +1,64 @@
+# Let's start just looking at the shear, using xC-ell/ShearCl DES data
+
+# Path to sacc files
+sacc_covG: '/mnt/extraspace/gravityls_3/S8z/Cls_2/4096_asDavid_recompute/cls_covG_covNG_DESgc_DESwl.fits'
+# sacc_covG: '/mnt/extraspace/gravityls_3/S8z/Cls_2/4096_asDavid/cls_cov.fits'
+# sacc_covNG: '/mnt/extraspace/gravityls_3/S8z/Cls_2/4096_asDavid/nls_covNG.fits'
+
+# Compute the Cls at all ells or interpolate
+interpolate_cls: True
+
+# Tracers
+tracers:
+  # - name: tracer's name in sacc file
+  #    type: 'gc' for galaxies, 'wl' for weak lensing, 'cv' for convergence
+  #    dz: redshift shift
+  #    m: prior on magnification bias
+  #    bin: the z-bin 
+
+  DESgc0:
+    type: 'gc'
+    dz: [0., 0.007]
+    bin: 0
+
+  DESgc1:
+    type: 'gc'
+    dz: [0., 0.007]
+    bin: 1
+
+  DESgc2:
+    type: 'gc'
+    dz: [0., 0.006]
+    bin: 2
+
+  DESgc3:
+    type: 'gc'
+    dz: [0., 0.01]
+    bin: 3
+
+  DESgc4:
+    type: 'gc'
+    dz: [0., 0.01]
+    bin: 4
+
+# TODO: automatize
+use_nuisance: ['gc_b_0', 'gc_b_1', 'gc_b_2', 'gc_b_3', 'gc_b_4', 'gc_dz_0', 'gc_dz_1', 'gc_dz_2', 'gc_dz_3', 'gc_dz_4']
+# biases:
+#   - wl:
+#     m: True
+#     IA: True
+
+# List all the different combinations of power spectra you want to analyze
+tracer_combinations:
+
+    # gc - gc
+    - tracers: ['DESgc0', 'DESgc0']
+      ell_cuts: [0, 145]
+    - tracers: ['DESgc1', 'DESgc1']
+      ell_cuts: [0, 225]
+    - tracers: ['DESgc2', 'DESgc2']
+      ell_cuts: [0, 298]
+    - tracers: ['DESgc3', 'DESgc3']
+      ell_cuts: [0, 371]
+    - tracers: ['DESgc4', 'DESgc4']
+      ell_cuts: [0, 435]

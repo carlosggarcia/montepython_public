@@ -1,0 +1,72 @@
+# Let's start just looking at the shear, using xC-ell/ShearCl DES data
+
+# Path to sacc files
+sacc_covG: 'cls_signal_covG_ns4096.fits'
+sacc_covNG: 'cls_noise_covNG_ns4096.fits'
+
+# Compute the Cls at all ells or interpolate
+interpolate_cls: True
+
+# Tracers
+tracers:
+  # - name: tracer's name in sacc file
+  #    type: 'gc' for galaxies, 'wl' for weak lensing, 'cv' for convergence
+  #    dz: redshift shift
+  #    m: prior on magnification bias
+  #    bin: the z-bin 
+
+  bin0:
+    type: 'wl'
+    dz: [-0.001, 0.016]
+    m: [0.012, 0.023]
+    bin: 0
+
+  bin1:
+    type: 'wl'
+    dz: [-0.019, 0.013]
+    m: [0.012, 0.023]
+    bin: 1
+
+  bin2:
+    type: 'wl'
+    dz: [0.009, 0.011]
+    m: [0.012, 0.023]
+    bin: 2
+
+  bin3:
+    type: 'wl'
+    dz: [-0.018, 0.022]
+    m: [0.012, 0.023]
+    bin: 3
+
+# TODO: automatize
+use_nuisance: ['wl_m_0', 'wl_m_1', 'wl_m_2', 'wl_m_3', 'wl_dz_0', 'wl_dz_1', 'wl_dz_2', 'wl_dz_3', 'wl_ia_A', 'wl_ia_eta', 'wl_ia_z0']
+# biases:
+#   - wl:
+#     m: True
+#     IA: True
+
+# List all the different combinations of power spectra you want to analyze
+tracer_combinations:
+
+    # wl -wl
+    - tracers: ['bin0', 'bin0']
+      ell_cuts: [0, 2000]
+    - tracers: ['bin0', 'bin1']
+      ell_cuts: [0, 2000]
+    - tracers: ['bin0', 'bin2']
+      ell_cuts: [0, 2000]
+    - tracers: ['bin0', 'bin3']
+      ell_cuts: [0, 2000]
+    - tracers: ['bin1', 'bin1']
+      ell_cuts: [0, 2000]
+    - tracers: ['bin1', 'bin2']
+      ell_cuts: [0, 2000]
+    - tracers: ['bin1', 'bin3']
+      ell_cuts: [0, 2000]
+    - tracers: ['bin2', 'bin2']
+      ell_cuts: [0, 2000]
+    - tracers: ['bin2', 'bin3']
+      ell_cuts: [0, 2000]
+    - tracers: ['bin3', 'bin3']
+      ell_cuts: [0, 2000]

@@ -1,0 +1,79 @@
+# Let's start just looking at the shear, using xC-ell/ShearCl DES data
+
+# Path to sacc files
+sacc_covG: '/mnt/extraspace/gravityls_3/S8z/Cls_2/4096_asDavid_recompute/cls_covG_covNG_DESgc_DESwl.fits'
+# sacc_covG: '/mnt/extraspace/gravityls_3/S8z/Cls_2/4096_asDavid/cls_cov_David_new_nka_full_noise.fits'
+# sacc_covG: '/mnt/extraspace/gravityls_3/S8z/Cls_2/4096_asDavid/cls_cov_both_David_new_nka_full_noise.fits'
+# sacc_covG: 'cls_cov_David_new_nka_full_noise.fits'
+# sacc_covG: '/mnt/extraspace/gravityls_3/S8z/Cls_2/4096_asDavid/cls_cov.fits'
+# sacc_covG: '/mnt/extraspace/gravityls_3/S8z/Cls_2/4096_asDavid/cls_all_together_new_fid_cov.fits'
+# sacc_covNG: '/mnt/extraspace/gravityls_3/S8z/Cls_2/4096_asDavid/nls_covNG.fits'
+# sacc_covG: 'cls_signal_covG_ns4096.fits'
+# sacc_covNG: 'cls_noise_covNG_ns4096.fits'
+
+# Compute the Cls at all ells or interpolate
+interpolate_cls: True
+
+# Tracers
+tracers:
+  # - name: tracer's name in sacc file
+  #    type: 'gc' for galaxies, 'wl' for weak lensing, 'cv' for convergence
+  #    dz: redshift shift
+  #    m: prior on magnification bias
+  #    bin: the z-bin 
+
+  DESwl0:
+    type: 'wl'
+    dz: [-0.001, 0.016]
+    m: [0.012, 0.023]
+    bin: 0
+
+  DESwl1:
+    type: 'wl'
+    dz: [-0.019, 0.013]
+    m: [0.012, 0.023]
+    bin: 1
+    
+  DESwl2:
+    type: 'wl'
+    dz: [0.009, 0.011]
+    m: [0.012, 0.023]
+    bin: 2
+  
+  DESwl3:
+    type: 'wl'
+    dz: [-0.018, 0.022]
+    m: [0.012, 0.023]
+    bin: 3
+
+# TODO: automatize
+use_nuisance: ['wl_m_0', 'wl_m_1', 'wl_m_2', 'wl_m_3', 'wl_dz_0', 'wl_dz_1', 'wl_dz_2', 'wl_dz_3', 'wl_ia_A', 'wl_ia_eta', 'wl_ia_z0']
+# biases:
+#   - wl:
+#     m: True
+#     IA: True
+
+# List all the different combinations of power spectra you want to analyze
+tracer_combinations:
+
+    # wl -wl
+     - tracers: ['DESwl0', 'DESwl0']
+       ell_cuts: [30, 2000]
+     - tracers: ['DESwl0', 'DESwl1']
+       ell_cuts: [30, 2000]
+     - tracers: ['DESwl0', 'DESwl2']
+       ell_cuts: [30, 2000]
+     - tracers: ['DESwl0', 'DESwl3']
+       ell_cuts: [30, 2000]
+     - tracers: ['DESwl1', 'DESwl1']
+       ell_cuts: [30, 2000]
+     - tracers: ['DESwl1', 'DESwl2']
+       ell_cuts: [30, 2000]
+     - tracers: ['DESwl1', 'DESwl3']
+       ell_cuts: [30, 2000]
+     - tracers: ['DESwl2', 'DESwl2']
+       ell_cuts: [30, 2000]
+     - tracers: ['DESwl2', 'DESwl3']
+       ell_cuts: [30, 2000]
+     - tracers: ['DESwl3', 'DESwl3']
+       ell_cuts: [30, 2000]
