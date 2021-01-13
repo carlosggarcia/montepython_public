@@ -1,0 +1,86 @@
+# Let's start just looking at the shear, using xC-ell/ShearCl DES data
+
+# Path to sacc files
+sacc_covG: '/mnt/extraspace/gravityls_3/S8z/Cls_2/KV450/cls_cov.fits'
+# sacc_covNG: 'cls_noise_covNG_ns4096.fits'
+
+# xi star
+xi_star_file: '/mnt/extraspace/damonge/S8z_data/KiDS_data/KV450_COSMIC_SHEAR_DATA_RELEASE/SUPPLEMENTARY_FILES/KV450_xi_pm_c_term.dat'
+
+# Compute the Cls at all ells or interpolate
+interpolate_cls: True
+
+# Tracers
+tracers:
+  # - name: tracer's name in sacc file
+  #    type: 'gc' for galaxies, 'wl' for weak lensing, 'cv' for convergence
+  #    dz: redshift shift
+  #    m: prior on magnification bias
+  #    bin: the z-bin 
+
+  KVwl0:
+    type: 'wl'
+    dz: [0.000, 0.039]
+    bin: 0
+
+  KVwl1:
+    type: 'wl'
+    dz: [0.000, 0.023]
+    bin: 1
+
+  KVwl2:
+    type: 'wl'
+    dz: [0.000, 0.026]
+    bin: 2
+
+  KVwl3:
+    type: 'wl'
+    dz: [0.000, 0.012]
+    bin: 3
+
+  KVwl4:
+    type: 'wl'
+    dz: [0.000, 0.011]
+    bin: 4
+
+# TODO: automatize
+use_nuisance: ['wl_dz_0', 'wl_dz_1', 'wl_dz_2', 'wl_dz_3',  'wl_dz_4','wl_ia_A', 'wl_ia_eta', 'wl_ia_z0', 'kv450_Ac'] #, 'kv450_B']
+# biases:
+#   - wl:
+#     m: True
+#     IA: True
+
+# List all the different combinations of power spectra you want to analyze
+tracer_combinations:
+
+    # wl -wl
+    - tracers: ['KVwl0', 'KVwl0']
+      ell_cuts: [0, 2000]
+    - tracers: ['KVwl0', 'KVwl1']
+      ell_cuts: [0, 2000]
+    - tracers: ['KVwl0', 'KVwl2']
+      ell_cuts: [0, 2000]
+    - tracers: ['KVwl0', 'KVwl3']
+      ell_cuts: [0, 2000]
+    - tracers: ['KVwl0', 'KVwl4']
+      ell_cuts: [0, 2000]
+    - tracers: ['KVwl1', 'KVwl1']
+      ell_cuts: [0, 2000]
+    - tracers: ['KVwl1', 'KVwl2']
+      ell_cuts: [0, 2000]
+    - tracers: ['KVwl1', 'KVwl3']
+      ell_cuts: [0, 2000]
+    - tracers: ['KVwl1', 'KVwl4']
+      ell_cuts: [0, 2000]
+    - tracers: ['KVwl2', 'KVwl2']
+      ell_cuts: [0, 2000]
+    - tracers: ['KVwl2', 'KVwl3']
+      ell_cuts: [0, 2000]
+    - tracers: ['KVwl2', 'KVwl4']
+      ell_cuts: [0, 2000]
+    - tracers: ['KVwl3', 'KVwl3']
+      ell_cuts: [0, 2000]
+    - tracers: ['KVwl3', 'KVwl4']
+      ell_cuts: [0, 2000]
+    - tracers: ['KVwl4', 'KVwl4']
+      ell_cuts: [0, 2000]
