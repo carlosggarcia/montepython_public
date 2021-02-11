@@ -30,6 +30,11 @@ class CCL():
             param_dict.pop('output')
         except KeyError:
             pass
+        if 'growth_param' in param_dict:
+            param_dict.pop('growth_param')
+            for k in list(param_dict.keys()):
+                if 'dpk' in k:
+                    param_dict.pop(k)
         cosmo_ccl = ccl.Cosmology(**param_dict)
         return cosmo_ccl
 
