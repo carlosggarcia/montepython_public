@@ -1,7 +1,7 @@
 # Let's start just looking at the shear, using xC-ell/ShearCl DES data
 
 # Path to sacc files
-sacc_covG: '/mnt/extraspace/gravityls_3/S8z/Cls_2/4096_asDavid_recompute/cls_covG_covNG_DESgc_DESwl.fits'
+sacc_covG: '/mnt/extraspace/gravityls_3/S8z/Cls_2/4096_asDavid_recompute_newfid/cls_covG_covNG_DESgc_DESwl.fits'
 # sacc_covG: '/mnt/extraspace/gravityls_3/S8z/Cls_2/4096_asDavid/cls_cov_David_new_nka_full_noise.fits'
 # sacc_covG: '/mnt/extraspace/gravityls_3/S8z/Cls_2/4096_asDavid/cls_cov_both_David_new_nka_full_noise.fits'
 # sacc_covG: 'cls_cov_David_new_nka_full_noise.fits'

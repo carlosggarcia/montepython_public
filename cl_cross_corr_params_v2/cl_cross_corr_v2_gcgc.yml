@@ -1,9 +1,9 @@
 # Let's start just looking at the shear, using xC-ell/ShearCl DES data
 
 # Path to sacc files
-sacc_covG: '/mnt/extraspace/gravityls_3/S8z/Cls_2/4096_asDavid_recompute/cls_covG_covNG_DESgc_DESwl.fits'
-# sacc_covG: '/mnt/extraspace/gravityls_3/S8z/Cls_2/4096_asDavid/cls_cov.fits'
-# sacc_covNG: '/mnt/extraspace/gravityls_3/S8z/Cls_2/4096_asDavid/nls_covNG.fits'
+sacc_covG: '/mnt/extraspace/gravityls_3/S8z/Cls_2/4096_asDavid_recompute_newfid/cls_covG_covNG_DESgc_DESwl.fits'
+# sacc_covG: '/mnt/extraspace/gravityls_3/S8z/Cls_2/4096_asDavid_recompute_newfid/cls_cov.fits'
+# sacc_covNG: '/mnt/extraspace/gravityls_3/S8z/Cls_2/4096_asDavid_recompute_newfid/nls_covNG.fits'
 
 # Compute the Cls at all ells or interpolate
 interpolate_cls: True
