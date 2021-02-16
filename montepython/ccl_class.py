@@ -44,7 +44,7 @@ class CCL():
         return cosmo_ccl
 
     def get_sigma8(self):
-        return ccl.sigma8(self.cosmo_ccl)
+        return self.get_sigma8z(0)
 
     def get_Omegam(self):
         Omm = self.pars['Omega_c'] + self.pars['Omega_b']
@@ -120,13 +120,10 @@ class CCL():
                 value = self.get_sigma8z(z)
             elif 'Dz_unnorm_' in name:
                 z = float(name.split('_')[-1])
-                a = 1 / (1 + z)
-                value = self.get_D_new(a)
+                value = self.get_Dz_unnorm(z)
             elif 'Dz_' in name:
                 z = float(name.split('_')[-1])
-                a = 1 / (1 + z)
-                D0_new = self.get_D_new(1)
-                value = self.get_D_new(a) / D0_new
+                value = self.get_Dz(z)
             else:
                 msg = "%s was not recognized as a derived parameter" % name
                 raise RuntimeError(msg)
@@ -142,11 +139,37 @@ class CCL():
         return S8z
 
     def get_sigma8z(self, z):
-        a = 1 / (1 + z)
-        D_new = self.get_D_new(a)
-        return D_new *  self.get_sigma8()
+        D = self.get_Dz(z)
+        return D *  ccl.sigma8(self.cosmo_ccl)
 
-    def get_D_new(self, a):
+    def get_Dz_unnorm(self, z):
+        a = 1 / (1 + z)
+        if not 'growth_param' in self.pars['growth_param']:
+            result = ccl.growth_factor_unnorm(self.cosmo_ccl, a)
+        else:
+            D = self.get_Dz_new_unnorm_over_D0_Planck_unnorm(z)
+            result = D * ccl.growth_factor_unnorm(self.cosmo_ccl_planck, 1)
+
+        return result
+
+    def get_Dz(self, z):
+        """
+        Return normilized D(z)
+        """
+        if not 'growth_param' in self.pars['growth_param']:
+            a = 1 / (1 + z)
+            result = ccl.growth_factor(self.cosmo_ccl, a)
+        else:
+            D0 = self.get_Dz_new_unnorm_over_D0_Planck_unnorm(0)
+            result = self.get_Dz_new_unnorm_over_D0_Planck_unnorm(z) / D0
+
+        return result
+
+    def get_Dz_new_unnorm_over_D0_Planck_unnorm(self, z):
+        """
+        Return the D(z)_new / D(0)_Planck that will modifiy growth
+        """
+        a = 1 / (1 + z)
         if self.pars['growth_param'] == 'taylor':
             # D(z) = (dpk0 + dpk1 * (1 - a) + ... ) * D_Planck(z)
             result = 0
@@ -179,6 +202,7 @@ class CCL():
 
     def pk2D_new(self, pk):
         def pknew(k, a):
-            D_new = self.get_D_new(a)
+            z = 1/a - 1
+            D_new = self.get_Dz_new_unnorm_over_D0_Planck_unnorm(z)
             return D_new ** 2 * pk.eval(k, 1, self.cosmo_ccl)
         return pknew
