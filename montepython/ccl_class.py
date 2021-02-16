@@ -121,6 +121,11 @@ class CCL():
             elif 'sigma8z_' in name:
                 z = float(name.split('_')[-1])
                 value = self.get_sigma8z(z)
+            elif 'Dz_' in name:
+                z = float(name.split('_')[-1])
+                a = 1 / (1 + z)
+                D0_new = self.get_D_new(1)
+                value = self.get_D_new(a) / D0_new
             else:
                 msg = "%s was not recognized as a derived parameter" % name
                 raise RuntimeError(msg)
@@ -137,7 +142,7 @@ class CCL():
     def get_sigma8z(self, z):
         a = 1 / (1 + z)
         D_new = self.get_D_new(a)
-        return D_new **2. *  self.get_sigma8()
+        return D_new *  self.get_sigma8()
 
     def get_D_new(self, a):
         if self.pars['growth_param'] == 'taylor':
