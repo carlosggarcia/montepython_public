@@ -165,7 +165,7 @@ class CCL():
             result = interp1d(z_Dz[0], z_Dz[1], kind='cubic',
                               fill_value='extrapolate', assume_sorted=True)
         else:
-            raise ValueError('growth_param {self.pars["growth_param"]} not implemented.')
+            raise ValueError(f'growth_param {self.pars["growth_param"]} not implemented.')
 
         return result
 
