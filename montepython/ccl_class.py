@@ -132,7 +132,6 @@ class CCL():
             else:
                 msg = "%s was not recognized as a derived parameter" % name
                 raise RuntimeError(msg)
-            print(name, value)
             derived[name] = value
 
         return derived
