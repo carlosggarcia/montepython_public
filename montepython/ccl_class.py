@@ -145,7 +145,8 @@ class CCL():
 
     def get_sigma8z(self, z):
         if not 'growth_param' in self.pars['growth_param']:
-            D = self.get_Dz(z)
+            a = 1 / (1 + z)
+            D = ccl.growth_factor(self.cosmo_ccl, a)
             sigma8z = D *  ccl.sigma8(self.cosmo_ccl)
         else:
             D = self.get_Dz_new_unnorm_over_D0_Planck_unnorm(z)
@@ -164,7 +165,7 @@ class CCL():
 
     def get_Dz(self, z):
         """
-        Return normilized D(z)
+        Return normalized D(z)
         """
         result = self.get_sigma8z(z) / self.get_sigma8z(0)
 
