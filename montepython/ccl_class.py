@@ -89,10 +89,7 @@ class CCL():
         return True
 
     def compute(self, level=[]):
-        try:
-            self.cosmo_ccl = self.get_cosmo_ccl()
-        except:
-            print('Error for', self.pars)
+        self.cosmo_ccl = self.get_cosmo_ccl()
         # Modified growth part
         if 'growth_param' in self.pars:
             pk = ccl.boltzmann.get_class_pk_lin(self.cosmo_ccl)
@@ -121,6 +118,10 @@ class CCL():
             elif 'sigma8z_' in name:
                 z = float(name.split('_')[-1])
                 value = self.get_sigma8z(z)
+            elif 'Dz_unnorm_' in name:
+                z = float(name.split('_')[-1])
+                a = 1 / (1 + z)
+                value = self.get_D_new(a)
             elif 'Dz_' in name:
                 z = float(name.split('_')[-1])
                 a = 1 / (1 + z)
@@ -129,6 +130,7 @@ class CCL():
             else:
                 msg = "%s was not recognized as a derived parameter" % name
                 raise RuntimeError(msg)
+            print(name, value)
             derived[name] = value
 
         return derived
@@ -167,8 +169,9 @@ class CCL():
 
             z_Dz = np.array(sorted(z_Dz)).T
 
+            z = (1/a - 1)
             result = interp1d(z_Dz[0], z_Dz[1], kind='cubic',
-                              fill_value='extrapolate', assume_sorted=True)
+                              fill_value='extrapolate', assume_sorted=True)(z)
         else:
             raise ValueError(f'growth_param {self.pars["growth_param"]} not implemented.')
 
