@@ -1,5 +1,6 @@
 import numpy as np
 import pyccl as ccl
+from scipy.interpolate import interp1d
 
 
 class CCL():
@@ -13,15 +14,18 @@ class CCL():
         self.state = 1
 
         # Set default parameters
+        # Planck 2018: Table 2 of 1807.06209
         self.pars = {
-            'h':       0.67,
-            'Omega_c': 0.27,
-            'Omega_b': 0.045,
-            'sigma8': 0.840,
-            'n_s':     0.96,
+            'h':       0.6736,
+            'Omega_c': 0.2640,
+            'Omega_b': 0.0493,
+            'sigma8': 0.8111,
+            'n_s': 0.9649,
             'w0': -1.0,
             'wa':  0.0
         }
+
+        self.cosmo_ccl_planck = self.get_cosmo_ccl()
 
     def get_cosmo_ccl(self):
         param_dict = dict({'transfer_function': 'boltzmann_class'},
@@ -35,6 +39,7 @@ class CCL():
             for k in list(param_dict.keys()):
                 if 'dpk' in k:
                     param_dict.pop(k)
+
         cosmo_ccl = ccl.Cosmology(**param_dict)
         return cosmo_ccl
 
@@ -84,7 +89,10 @@ class CCL():
         return True
 
     def compute(self, level=[]):
-        self.cosmo_ccl = self.get_cosmo_ccl()
+        try:
+            self.cosmo_ccl = self.get_cosmo_ccl()
+        except:
+            print('Error for', self.pars)
         # Modified growth part
         if 'growth_param' in self.pars:
             pk = ccl.boltzmann.get_class_pk_lin(self.cosmo_ccl)
@@ -107,6 +115,12 @@ class CCL():
                 value = self.get_Omegam()
             elif name == 'S_8':
                 value = self.get_S8()
+            elif 'S8z_' in name:
+                z = float(name.split('_')[-1])
+                value = self.get_S8z(z)
+            elif 'sigma8z_' in name:
+                z = float(name.split('_')[-1])
+                value = self.get_sigma8z(z)
             else:
                 msg = "%s was not recognized as a derived parameter" % name
                 raise RuntimeError(msg)
@@ -114,9 +128,21 @@ class CCL():
 
         return derived
 
-    def dpk(self, a):
-        result = 0
-        if self.pars['growth_param'] == 'linear':
+    def get_S8z(self, z):
+        Omega_m = self.get_Omegam()
+        sigma8z = self.get_sigma8z(z)
+        S8z = sigma8z * (Omega_m/0.3)**(0.5)
+        return S8z
+
+    def get_sigma8z(self, z):
+        a = 1 / (1 + z)
+        D_new = self.get_D_new(a)
+        return D_new **2. *  self.get_sigma8()
+
+    def get_D_new(self, a):
+        if self.pars['growth_param'] == 'taylor':
+            # D(z) = (dpk0 + dpk1 * (1 - a) + ... ) * D_Planck(z)
+            result = 0
             i = 0
             while True:
                 pname = 'dpk' + str(i)
@@ -125,9 +151,26 @@ class CCL():
                 dpki = self.pars[pname]
                 result += dpki / np.math.factorial(i) * (1-a)**i
                 i += 1
+            result *= ccl.growth_factor(self.cosmo_ccl_planck, a)
+        elif self.pars['growth_param'] == 'binning':
+            # D(z) = D_binned(z)
+            z_Dz = []
+            for pname, pvalue in self.pars.items():
+                if 'dpk' in pname:
+                    z = float(pname.split('_')[-1])
+                    z_Dz.append((z, pvalue))
+
+            z_Dz = np.array(sorted(z_Dz)).T
+
+            result = interp1d(z_Dz[0], z_Dz[1], kind='cubic',
+                              fill_value='extrapolate', assume_sorted=True)
+        else:
+            raise ValueError('growth_param {self.pars["growth_param"]} not implemented.')
+
         return result
 
     def pk2D_new(self, pk):
         def pknew(k, a):
-            return (1 + self.dpk(a)) ** 2 * pk.eval(k, a, self.cosmo_ccl)
+            D_new = self.get_D_new(a)
+            return D_new ** 2 * pk.eval(k, 1, self.cosmo_ccl)
         return pknew
