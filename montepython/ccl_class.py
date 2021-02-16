@@ -84,6 +84,11 @@ class CCL():
             self.pars['w0'] = self.pars.pop('w_0')
         if 'w_a' in self.pars.keys():
             self.pars['wa'] = self.pars.pop('w_a')
+        # Check that sigma8 or As are fixed with "growth_param"
+        if (('A_s' in pars_in) or ('sigma8' in pars_in)) and \
+                ("growth_param" in self.pars):
+            raise RuntimeError("Remove 'A_s' and 'sigma8' when modifying \
+                               growth")
 
         self.pars.update(kars)
         return True
@@ -139,12 +144,17 @@ class CCL():
         return S8z
 
     def get_sigma8z(self, z):
-        D = self.get_Dz(z)
-        return D *  ccl.sigma8(self.cosmo_ccl)
+        if not 'growth_param' in self.pars['growth_param']:
+            D = self.get_Dz(z)
+            sigma8z = D *  ccl.sigma8(self.cosmo_ccl)
+        else:
+            D = self.get_Dz_new_unnorm_over_D0_Planck_unnorm(z)
+            sigma8z = D * ccl.sigma8(self.cosmo_ccl_planck)
+        return sigma8z
 
     def get_Dz_unnorm(self, z):
-        a = 1 / (1 + z)
         if not 'growth_param' in self.pars['growth_param']:
+            a = 1 / (1 + z)
             result = ccl.growth_factor_unnorm(self.cosmo_ccl, a)
         else:
             D = self.get_Dz_new_unnorm_over_D0_Planck_unnorm(z)
@@ -156,12 +166,7 @@ class CCL():
         """
         Return normilized D(z)
         """
-        if not 'growth_param' in self.pars['growth_param']:
-            a = 1 / (1 + z)
-            result = ccl.growth_factor(self.cosmo_ccl, a)
-        else:
-            D0 = self.get_Dz_new_unnorm_over_D0_Planck_unnorm(0)
-            result = self.get_Dz_new_unnorm_over_D0_Planck_unnorm(z) / D0
+        result = self.get_sigma8z(z) / self.get_sigma8z(0)
 
         return result
 
@@ -169,8 +174,8 @@ class CCL():
         """
         Return the D(z)_new / D(0)_Planck that will modifiy growth
         """
-        a = 1 / (1 + z)
         if self.pars['growth_param'] == 'taylor':
+            a = 1 / (1 + z)
             # D(z) = (dpk0 + dpk1 * (1 - a) + ... ) * D_Planck(z)
             result = 0
             i = 0
@@ -192,7 +197,6 @@ class CCL():
 
             z_Dz = np.array(sorted(z_Dz)).T
 
-            z = (1/a - 1)
             result = interp1d(z_Dz[0], z_Dz[1], kind='cubic',
                               fill_value='extrapolate', assume_sorted=True)(z)
         else:
