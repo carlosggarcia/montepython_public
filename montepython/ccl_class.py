@@ -191,13 +191,22 @@ class CCL():
             z_Dz = []
             for pname, pvalue in self.pars.items():
                 if 'dpk' in pname:
-                    z = float(pname.split('_')[-1])
-                    z_Dz.append((z, pvalue))
+                    z_pvalue = float(pname.split('_')[-1])
+                    z_Dz.append((z_pvalue, pvalue))
 
+            # Put a small value ~ 0 at really high z so that Dz is not
+            # extrapolated to -infty
+            a_anchor = 1e-4  # The lower value available in ccl for D(z)
+            z_anchor = 1 / a_anchor - 1
+            Dz_anchor = ccl.growth_factor(self.cosmo_ccl_planck, a_anchor)
+            z_Dz.append((z_anchor, Dz_anchor))
             z_Dz = np.array(sorted(z_Dz)).T
 
-            result = interp1d(z_Dz[0], z_Dz[1], kind='cubic',
-                              fill_value='extrapolate', assume_sorted=True)(z)
+            # Interpolate in log-log space, as D ~ exp
+            result = interp1d(np.log(z_Dz[0] + 1), np.log(z_Dz[1]),
+                              kind='quadratic', fill_value='extrapolate',
+                              assume_sorted=True)(np.log(z+1))
+            result = np.exp(result)
         else:
             raise ValueError(f'growth_param {self.pars["growth_param"]} not implemented.')
 
