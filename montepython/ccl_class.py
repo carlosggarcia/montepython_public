@@ -108,7 +108,6 @@ class CCL():
         return
 
     def get_current_derived_parameters(self, names):
-
         derived = {}
         for name in names:
             if name == 'sigma_8':
@@ -143,7 +142,7 @@ class CCL():
         return S8z
 
     def get_sigma8z(self, z):
-        if not 'growth_param' in self.pars['growth_param']:
+        if not 'growth_param' in self.pars:
             a = 1 / (1 + z)
             D = ccl.growth_factor(self.cosmo_ccl, a)
             sigma8z = D *  ccl.sigma8(self.cosmo_ccl)
