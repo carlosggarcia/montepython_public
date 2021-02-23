@@ -27,6 +27,16 @@ class CCL():
 
         self.cosmo_ccl_planck = self.get_cosmo_ccl()
 
+        # Copied from ccl/pk2d.py
+        # These lines are needed to compute the Pk2D array
+        self.nk = ccl.ccllib.get_pk_spline_nk(self.cosmo_ccl_planck.cosmo)
+        self.na = ccl.ccllib.get_pk_spline_na(self.cosmo_ccl_planck.cosmo)
+        self.a_arr, _ = ccl.ccllib.get_pk_spline_a(self.cosmo_ccl_planck.cosmo,
+                                                   self.na, 0)
+        lk_arr, _ = ccl.ccllib.get_pk_spline_lk(self.cosmo_ccl_planck.cosmo,
+                                                self.nk, 0)
+        self.k_arr = np.exp(lk_arr)
+
     def get_cosmo_ccl(self):
         param_dict = dict({'transfer_function': 'boltzmann_class'},
                           **self.pars)
@@ -97,13 +107,20 @@ class CCL():
         self.cosmo_ccl = self.get_cosmo_ccl()
         # Modified growth part
         if 'growth_param' in self.pars:
-            pk = ccl.boltzmann.get_class_pk_lin(self.cosmo_ccl)
-            pknew = ccl.Pk2D(pkfunc=self.pk2D_new(pk), cosmo=self.cosmo_ccl,
-                             is_logp=False)
-            ccl.ccllib.cosmology_compute_linear_power(self.cosmo_ccl.cosmo,
-                                                      pknew.psp, 0)
+            pkln = self.pk2D_arr(self.cosmo_ccl)
+            pk_linear = {'a': self.a_arr, 'k': self.k_arr,
+                         'delta_matter:delta_matter': pkln}
+            p = self.cosmo_ccl.cosmo.params
+            self.cosmo_ccl = ccl.CosmologyCalculator(Omega_c=p.Omega_c,
+                                                     Omega_b=p.Omega_b, h=p.h,
+                                                     sigma8=p.sigma8,
+                                                     n_s=p.n_s,
+                                                     pk_linear=pk_linear,
+                                                     nonlinear_model='halofit')
+            # This line is needed for some reason. Fails w/o it.
+            # issue #859
+            ccl.nonlin_matter_power(self.cosmo_ccl, 0.1, 0.1)
 
-        # self.cosmo_ccl.compute_nonlin_power()
         ccl.sigma8(self.cosmo_ccl)  # David's suggestion
         return
 
@@ -212,9 +229,8 @@ class CCL():
 
         return result
 
-    def pk2D_new(self, pk):
-        def pknew(k, a):
-            z = 1/a - 1
-            D_new = self.get_Dz_new_unnorm_over_D0_Planck_unnorm(z)
-            return D_new ** 2 * pk.eval(k, 1, self.cosmo_ccl)
-        return pknew
+    def pk2D_arr(self, cosmo):
+        z = 1/self.a_arr - 1
+        D_new = self.get_Dz_new_unnorm_over_D0_Planck_unnorm(z)
+        pk0 = ccl.linear_matter_power(cosmo, self.k_arr, 1)
+        return D_new[:, None] ** 2 * pk0
