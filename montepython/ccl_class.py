@@ -117,11 +117,8 @@ class CCL():
                                                      n_s=p.n_s,
                                                      pk_linear=pk_linear,
                                                      nonlinear_model='halofit')
-            # This line is needed for some reason. Fails w/o it.
-            # issue #859
-            ccl.nonlin_matter_power(self.cosmo_ccl, 0.1, 0.1)
 
-        ccl.sigma8(self.cosmo_ccl)  # David's suggestion
+        # ccl.sigma8(self.cosmo_ccl)  # David's suggestion
         return
 
     def get_current_derived_parameters(self, names):
