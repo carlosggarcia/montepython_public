@@ -87,6 +87,8 @@ class cl_cross_corr_kv450(Likelihood):
         fname = self.params['xi_star_file']
         theta, xip_c_per_zbin, xim_c_per_zbin = np.loadtxt(fname, usecols=(1, 3, 4), unpack=True)
         ells_unique = np.unique(ells)
+        # Theta (arcmin -> rads)
+        theta = np.radians(theta / 60.)
         integrand_unique = integrate.simps(theta * xip_c_per_zbin * jv(0, ells_unique[:, None] * theta), theta, axis=1)
         Cl_star_unique = 2 * np.pi * integrand_unique
 
