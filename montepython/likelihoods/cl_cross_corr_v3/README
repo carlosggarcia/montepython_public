@@ -1,0 +1,31 @@
+List of files created or modified together with their use.
+
+montepython/likelihoods/cl_cross_corr_v2/README: this file
+
+
+Files you have to modify at each run:
+cl_cross_corr.param: MCMC params file; cosmo and nuisance params; path to XX.ylm file defined here 
+cl_cross_corr.yml: Define maps and tracers; add (Gaussian) priors to nuisance parameters; modify data set here 
+
+
+Files you should not modify, unless you want to inspect the code:
+montepython/data.py: implementation in MP of the CCL cosmo module
+montepython/initialise.py: implementation in MP of the CCL cosmo module
+montepython/ccl_class.py: CCL equivalent of the classy wrapper. Create CCL class
+montepython/likelihoods/cl_cross_corr/__init__.py: contains the likelihood. Import data and compute loglkl at each step
+montepython/likelihoods/cl_cross_corr/cl_cross_corr.data: path to data files; list of nuisance parameters (modify if you add/remove nuisance params); gaussian priors specifications for nuisance parameters (if prior is flat remove it from here and refer to the *.param file)
+
+
+
+
+Example of run
+python montepython/MontePython.py run --conf ccl.conf -p cl_cross_corr.param -o chains/test/ -N 2
+
+conf: use ccl instead of class (do not change it)
+p: parameter file (change it)
+o: output directory (it must be empty or non existing. otherwise append or error)
+N: number of steps (put a very large number and check convergence from time to time)
+
+run:
+python montepython/MontePython.py run --help
+for all the options
