@@ -49,6 +49,12 @@ class CCL():
             for k in list(param_dict.keys()):
                 if 'dpk' in k:
                     param_dict.pop(k)
+        if 'omega_b' in param_dict:
+            omega_b = param_dict.pop('omega_b')
+            param_dict['Omega_b'] = omega_b / param_dict['h']**2
+        if 'omega_c' in param_dict:
+            omega_c = param_dict.pop('omega_c')
+            param_dict['Omega_c'] = omega_c / param_dict['h']**2
 
         cosmo_ccl = ccl.Cosmology(**param_dict)
         return cosmo_ccl
