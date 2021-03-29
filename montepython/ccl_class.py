@@ -259,8 +259,8 @@ class CCL():
                 # Interpolate in log-log space, as D ~ exp
                 result[z < z_anchor] = np.exp(logresult_intp1d(np.log(z[z < z_anchor]+1)))
                 result[z >= z_anchor] = ccl.growth_factor(self.cosmo_ccl_planck, 1/(z[z >= z_anchor] + 1))
-                planck = ccl.growth_factor(self.cosmo_ccl_planck, 1/(z + 1))
-                np.savez('s8z_test.py', mod=result, planck=planck, z_Dz=z_Dz, z=z)
+                # planck = ccl.growth_factor(self.cosmo_ccl_planck, 1/(z + 1))
+                # np.savez('s8z_test.py', mod=result, planck=planck, z_Dz=z_Dz, z=z)
         else:
             raise ValueError(f'growth_param {self.pars["growth_param"]} not implemented.')
 
