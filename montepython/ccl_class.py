@@ -46,6 +46,8 @@ class CCL():
             pass
         if 'growth_param' in param_dict:
             param_dict.pop('growth_param')
+            if 'z_anchor' in param_dict:
+                param_dict.pop('z_anchor')
             for k in list(param_dict.keys()):
                 if 'dpk' in k:
                     param_dict.pop(k)
@@ -227,6 +229,38 @@ class CCL():
                               kind='quadratic', fill_value='extrapolate',
                               assume_sorted=True)(np.log(z+1))
             result = np.exp(result)
+        elif self.pars['growth_param'] == 'binning_softer':
+            # D(z) = D_binned(z)
+            z_Dz = []
+            for pname, pvalue in self.pars.items():
+                if 'dpk' in pname:
+                    z_pvalue = float(pname.split('_')[-1])
+                    z_Dz.append((z_pvalue, pvalue))
+
+            # Put a small value ~ 0 at really high z so that Dz is not
+            # extrapolated to -infty
+            z_anchor = self.pars['z_anchor'] # z at which we go back to Planck's
+            Dz_anchor = ccl.growth_factor(self.cosmo_ccl_planck, 1/(z_anchor + 1))
+            z_Dz.append((z_anchor, Dz_anchor))
+            z_Dz = np.array(sorted(z_Dz)).T
+            if np.any(z < z_anchor):
+                logresult_intp1d = interp1d(np.log(z_Dz[0] + 1), np.log(z_Dz[1]),
+                                  kind='quadratic', fill_value='extrapolate',
+                                  assume_sorted=True)
+
+
+            if (type(z) is int) or (type(z) is float):
+                if z >= z_anchor:
+                    result = ccl.growth_factor(self.cosmo_ccl_planck, 1/(z + 1))
+                else:
+                    result = np.exp(logresult_intp1d(np.log(z+1)))
+            else:
+                result = np.zeros_like(z)
+                # Interpolate in log-log space, as D ~ exp
+                result[z < z_anchor] = np.exp(logresult_intp1d(np.log(z[z < z_anchor]+1)))
+                result[z >= z_anchor] = ccl.growth_factor(self.cosmo_ccl_planck, 1/(z[z >= z_anchor] + 1))
+                planck = ccl.growth_factor(self.cosmo_ccl_planck, 1/(z + 1))
+                np.savez('s8z_test.py', mod=result, planck=planck, z_Dz=z_Dz, z=z)
         else:
             raise ValueError(f'growth_param {self.pars["growth_param"]} not implemented.')
 
