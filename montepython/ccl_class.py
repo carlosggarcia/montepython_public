@@ -48,6 +48,8 @@ class CCL():
             param_dict.pop('growth_param')
             if 'z_anchor' in param_dict:
                 param_dict.pop('z_anchor')
+            if 'spline' in param_dict:
+                param_dict.pop('spline')
             for k in list(param_dict.keys()):
                 if 'dpk' in k:
                     param_dict.pop(k)
@@ -224,9 +226,13 @@ class CCL():
             z_Dz.append((z_anchor, Dz_anchor))
             z_Dz = np.array(sorted(z_Dz)).T
 
+            if 'spline' in self.pars:
+                kind = self.pars['spline']
+            else:
+                kind = 'quadratic'
             # Interpolate in log-log space, as D ~ exp
             result = interp1d(np.log(z_Dz[0] + 1), np.log(z_Dz[1]),
-                              kind='quadratic', fill_value='extrapolate',
+                              kind=kind, fill_value='extrapolate',
                               assume_sorted=True)(np.log(z+1))
             result = np.exp(result)
         elif self.pars['growth_param'] == 'binning_softer':
@@ -244,8 +250,13 @@ class CCL():
             z_Dz.append((z_anchor, Dz_anchor))
             z_Dz = np.array(sorted(z_Dz)).T
             if np.any(z < z_anchor):
+                if 'spline' in self.pars:
+                    kind = self.pars['spline']
+                else:
+                    kind = 'quadratic'
+
                 logresult_intp1d = interp1d(np.log(z_Dz[0] + 1), np.log(z_Dz[1]),
-                                  kind='quadratic', fill_value='extrapolate',
+                                  kind=kind, fill_value='extrapolate',
                                   assume_sorted=True)
 
 
