@@ -205,8 +205,16 @@ class cl_cross_corr_v3(Likelihood):
                 pname = f'{trname}_gc_b'
                 bias = data.mcmc_parameters[pname]['current']*data.mcmc_parameters[pname]['scale']
                 bz = bias*np.ones(z.shape)
+                # Calculate magnification bias
+                mag_bias = None  # Default
+                pname = f'{trname}_gc_s'
+                if pname in trvals:
+                    s = data.mcmc_parameters[pname]['current']*data.mcmc_parameters[pname]['scale']
+                    sz = s * np.ones_like(z)
+                    mag_bias = (z, sz)
                 # Get tracer
-                ccl_tracers[trname] = ccl.NumberCountsTracer(cosmo.cosmo_ccl,has_rsd=False,dndz=(z_dz, pz),bias=(z, bz))
+                ccl_tracers[trname] = ccl.NumberCountsTracer(cosmo.cosmo_ccl,has_rsd=False,dndz=(z_dz, pz),
+                                                             bias=(z, bz), mag_bias=None)
             elif trvals['type'] == 'wl':
                 # Get log prior for m
                 pname = f'{trname}_wl_m'
