@@ -208,13 +208,13 @@ class cl_cross_corr_v3(Likelihood):
                 # Calculate magnification bias
                 mag_bias = None  # Default
                 pname = f'{trname}_gc_s'
-                if pname in trvals:
+                if pname in data.mcmc_parameters:
                     s = data.mcmc_parameters[pname]['current']*data.mcmc_parameters[pname]['scale']
                     sz = s * np.ones_like(z)
                     mag_bias = (z, sz)
                 # Get tracer
                 ccl_tracers[trname] = ccl.NumberCountsTracer(cosmo.cosmo_ccl,has_rsd=False,dndz=(z_dz, pz),
-                                                             bias=(z, bz), mag_bias=None)
+                                                             bias=(z, bz), mag_bias=mag_bias)
             elif trvals['type'] == 'wl':
                 # Get log prior for m
                 pname = f'{trname}_wl_m'
@@ -270,7 +270,7 @@ class cl_cross_corr_v3(Likelihood):
         # print('chi2 =', chi2)
         # print('lp =', 2* lp)
         # np.savez_compressed(os.path.join(self.outdir, 'cl_cross_corr_bestfit_info.npz'), chi2_nolp=chi2, lp_chi2=2*lp, chi2=2*lkl, chi2dof=2*lkl/self.dof,
-        #                     cls=theory)#, ells=self.ells_tosave, tracers=self.tracers_tosave)
+        #                     cls=theory, res=(self.data-theory)/np.sqrt(np.diag(self.cov))) #, ells=self.ells_tosave, tracers=self.tracers_tosave)
 
 
         return lkl
