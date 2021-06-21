@@ -1,0 +1,204 @@
+# Let's start just looking at the shear, using xC-ell/ShearCl DES data
+
+# Path to sacc files
+# sacc_covG: '/mnt/extraspace/damonge/S8z_data/outputs/DECALS_KiDS/K1000_4096/cls_covG.fits'
+sacc_covG: '/mnt/zfsusers/gravityls_3/codes/montepython_cgg_emilio/cls_K1000_4096_zeroed_covG_v2.fits'
+# sacc_covNG: '/mnt/extraspace/gravityls_3/S8z/Cls_2/4096_asDavid_recompute_newfid/nls_covNG.fits'
+
+# Compute the Cls at all ells or interpolate
+interpolate_cls: True
+
+# Tracers
+tracers:
+  # - name: tracer's name in sacc file
+  #    type: 'gc' for galaxies, 'wl' for weak lensing, 'cv' for convergence
+  #    dz: redshift shift
+  #    m: prior on magnification bias
+  #    bin: the z-bin 
+
+  DECALS__0:
+    type: 'gc'
+    dz: [0., 0.007]
+
+  DECALS__1:
+    type: 'gc'
+    dz: [0., 0.007]
+
+  DECALS__2:
+    type: 'gc'
+    dz: [0., 0.006]
+
+  DECALS__3:
+    type: 'gc'
+    dz: [0., 0.01]
+
+  KiDS1000__0:
+    type: 'wl'
+    dz: [0.000, 0.0106]
+    m: [0.0, 0.019]
+
+  KiDS1000__1:
+    type: 'wl'
+    dz: [0.002, 0.0113]
+    m: [0.0, 0.020]
+    
+  KiDS1000__2:
+    type: 'wl'
+    dz: [0.013, 0.0118]
+    m: [0.0, 0.017]
+  
+  KiDS1000__3:
+    type: 'wl'
+    dz: [0.011, 0.0087]
+    m: [0.0, 0.012]
+
+  KiDS1000__4:
+    type: 'wl'
+    dz: [-0.006, 0.0097]
+    m: [0.0, 0.010]
+
+  eBOSS__0:
+    type: 'gc'
+
+  eBOSS__1:
+    type: 'gc'
+
+  PLAcv:
+    type: 'cv'
+
+
+# biases:
+#   - wl:
+#     m: True
+#     IA: True
+
+# List all the different combinations of power spectra you want to analyze
+tracer_combinations:
+
+    # gc-gc
+    # Remove first bin
+    # kmax = 0.15
+    # l \sim chi(z_mean) * k
+    # z_mean = 0.21, 0.38, 0.52, 0.66
+    - tracers: ['DECALS__0', 'DECALS__0']
+      ell_cuts: [30, 134]
+    - tracers: ['DECALS__1', 'DECALS__1']
+      ell_cuts: [30, 232]
+    - tracers: ['DECALS__2', 'DECALS__2']
+      ell_cuts: [30, 306]
+    - tracers: ['DECALS__3', 'DECALS__3']
+      ell_cuts: [30, 374]
+
+    # gc -wl
+    - tracers: ['DECALS__0', 'KiDS1000__0']
+      ell_cuts: [100, 134]
+    - tracers: ['DECALS__0', 'KiDS1000__1']
+      ell_cuts: [100, 134]
+    - tracers: ['DECALS__0', 'KiDS1000__2']
+      ell_cuts: [100, 134]
+    - tracers: ['DECALS__0', 'KiDS1000__3']
+      ell_cuts: [100, 134]
+    - tracers: ['DECALS__0', 'KiDS1000__4']
+      ell_cuts: [100, 134]
+    - tracers: ['DECALS__1', 'KiDS1000__0']
+      ell_cuts: [100, 232]
+    - tracers: ['DECALS__1', 'KiDS1000__1']
+      ell_cuts: [100, 232]
+    - tracers: ['DECALS__1', 'KiDS1000__2']
+      ell_cuts: [100, 232]
+    - tracers: ['DECALS__1', 'KiDS1000__3']
+      ell_cuts: [100, 232]
+    - tracers: ['DECALS__1', 'KiDS1000__4']
+      ell_cuts: [100, 225]
+    - tracers: ['DECALS__2', 'KiDS1000__0']
+      ell_cuts: [100, 306]
+    - tracers: ['DECALS__2', 'KiDS1000__1']
+      ell_cuts: [100, 306]
+    - tracers: ['DECALS__2', 'KiDS1000__2']
+      ell_cuts: [100, 306]
+    - tracers: ['DECALS__2', 'KiDS1000__3']
+      ell_cuts: [100, 306]
+    - tracers: ['DECALS__2', 'KiDS1000__4']
+      ell_cuts: [100, 306]
+    - tracers: ['DECALS__3', 'KiDS1000__0']
+      ell_cuts: [100, 374]
+    - tracers: ['DECALS__3', 'KiDS1000__1']
+      ell_cuts: [100, 374]
+    - tracers: ['DECALS__3', 'KiDS1000__2']
+      ell_cuts: [100, 374]
+    - tracers: ['DECALS__3', 'KiDS1000__3']
+      ell_cuts: [100, 374]
+    - tracers: ['DECALS__3', 'KiDS1000__4']
+      ell_cuts: [100, 374]
+      
+    # gc -cv
+    # To remove ells < 8 we remove the first bin 
+    - tracers: ['DECALS__0', 'PLAcv']
+      ell_cuts: [30, 134]
+    - tracers: ['DECALS__1', 'PLAcv']
+      ell_cuts: [30, 232]
+    - tracers: ['DECALS__2', 'PLAcv']
+      ell_cuts: [30, 306]
+    - tracers: ['DECALS__3', 'PLAcv']
+      ell_cuts: [30, 374]
+
+    # wl -wl
+    - tracers: ['KiDS1000__0', 'KiDS1000__0']
+      ell_cuts: [100, 2000]
+    - tracers: ['KiDS1000__0', 'KiDS1000__1']
+      ell_cuts: [100, 2000]
+    - tracers: ['KiDS1000__0', 'KiDS1000__2']
+      ell_cuts: [100, 2000]
+    - tracers: ['KiDS1000__0', 'KiDS1000__3']
+      ell_cuts: [100, 2000]
+    - tracers: ['KiDS1000__0', 'KiDS1000__4']
+      ell_cuts: [100, 2000]
+    - tracers: ['KiDS1000__1', 'KiDS1000__1']
+      ell_cuts: [100, 2000]
+    - tracers: ['KiDS1000__1', 'KiDS1000__2']
+      ell_cuts: [100, 2000]
+    - tracers: ['KiDS1000__1', 'KiDS1000__3']
+      ell_cuts: [100, 2000]
+    - tracers: ['KiDS1000__1', 'KiDS1000__4']
+      ell_cuts: [100, 2000]
+    - tracers: ['KiDS1000__2', 'KiDS1000__2']
+      ell_cuts: [100, 2000]
+    - tracers: ['KiDS1000__2', 'KiDS1000__3']
+      ell_cuts: [100, 2000]
+    - tracers: ['KiDS1000__2', 'KiDS1000__4']
+      ell_cuts: [100, 2000]
+    - tracers: ['KiDS1000__3', 'KiDS1000__3']
+      ell_cuts: [100, 2000]
+    - tracers: ['KiDS1000__3', 'KiDS1000__4']
+      ell_cuts: [100, 2000]
+    - tracers: ['KiDS1000__4', 'KiDS1000__4']
+      ell_cuts: [100, 2000]
+
+    # wl -cv
+    - tracers: ['KiDS1000__0', 'PLAcv']
+      ell_cuts: [100, 2000]
+    - tracers: ['KiDS1000__1', 'PLAcv']
+      ell_cuts: [100, 2000]
+    - tracers: ['KiDS1000__2', 'PLAcv']
+      ell_cuts: [100, 2000]
+    - tracers: ['KiDS1000__3', 'PLAcv']
+      ell_cuts: [100, 2000]
+    - tracers: ['KiDS1000__4', 'PLAcv']
+      ell_cuts: [100, 2000]
+
+    # eBOSS - eBOSS
+    # kmin = 0.02
+    # kmax = 0.15
+    # l \sim chi(z_mean) * k
+    # z_mean = 1.2, 1.8
+    - tracers: ['eBOSS__0', 'eBOSS__0']
+      ell_cuts: [79, 590]
+    - tracers: ['eBOSS__1', 'eBOSS__1']
+      ell_cuts: [102, 764]
+
+    # eBOSS - PLAcv
+    - tracers: ['eBOSS__0', 'PLAcv']
+      ell_cuts: [79, 590]
+    - tracers: ['eBOSS__1', 'PLAcv']
+      ell_cuts: [102, 764]
+
