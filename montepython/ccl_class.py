@@ -94,6 +94,8 @@ class CCL():
         ### Check for parmeters of cl_cross_corr lkl
         if 'params_dir' in self.pars.keys():
             del[self.pars['params_dir']]
+        if 'params_dir_copy' in self.pars.keys():
+            del[self.pars['params_dir_copy']]
         if 'fiducial_cov' in self.pars.keys():
             del[self.pars['fiducial_cov']]
         #
