@@ -226,6 +226,8 @@ class Data(object):
         # Determine which cosmological code is in use
         if os.path.isfile(self.path['cosmo']+'/main/class.c'):
             self.cosmological_module_name = 'CLASS'
+        elif self.path['cosmo'].find('pyccl_blcdm') != -1:
+            self.cosmological_module_name = 'CCL_BLCDM'
         elif self.path['cosmo'].find('pyccl') != -1:
             self.cosmological_module_name = 'CCL'
         else:
@@ -307,7 +309,7 @@ class Data(object):
                     # not have this feature properly implemented. Ignore this.
                     pass
 
-        elif self.cosmological_module_name == 'CCL':
+        elif self.cosmological_module_name in ['CCL', 'CCL_BLCDM']:
             try:
                 import pyccl
                 self.version = pyccl.__version__

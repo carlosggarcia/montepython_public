@@ -186,6 +186,9 @@ def recover_cosmological_module(data):
     elif data.cosmological_module_name == 'CCL':
         from ccl_class import CCL
         cosmo = CCL()
+    elif data.cosmological_module_name == 'CCL_BLCDM':
+        from ccl_class_blcdm import CCL
+        cosmo = CCL()
     else:
         raise io_mp.ConfigurationError(
             "Unrecognised cosmological module. " +
